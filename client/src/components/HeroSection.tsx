@@ -1,15 +1,11 @@
 /*
  * Design: Cybernetic Brutalism
  * Hero — Left text + Right architecture flow diagram
- * Badge: 🦀 Native AI Gateway · Built with Rust
- * CTA: Read the Docs → / View on GitHub
- * Stats: LLMs Supported 100+, Uptime Target 99.99%, Proxy Overhead <1ms
- * Right: Web App, Mobile, AI Agent, API Client → AISIX Gateway → OpenAI, Claude, Gemini, DeepSeek, Mistral
+ * UPDATES: Official LLM logos, data flow particles from gateway to providers, simplified background
  */
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Github, BookOpen } from "lucide-react";
-
-const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663281797301/B5D8znjtLgNMM5PodSZYSz/hero-bg-mFDc2uwjZq7xhjd53fAG9G.webp";
+import { OpenAILogo, AnthropicLogo, GeminiLogo, DeepSeekLogo, MistralLogo } from "./ProviderLogos";
 
 function AnimatedCounter({ target, suffix = "", prefix = "", decimals = 0, duration = 1800 }: { target: number; suffix?: string; prefix?: string; decimals?: number; duration?: number }) {
   const [value, setValue] = useState(prefix + "0" + suffix);
@@ -47,6 +43,18 @@ function AnimatedCounter({ target, suffix = "", prefix = "", decimals = 0, durat
   return <span ref={ref}>{value}</span>;
 }
 
+/* Data flow particle component - animated dots flowing from gateway to providers */
+function DataFlowParticle({ delay, pathId }: { delay: number; pathId: string }) {
+  return (
+    <circle r="2.5" fill="#6D49FF" opacity="0.9">
+      <animateMotion dur="2s" repeatCount="indefinite" begin={`${delay}s`}>
+        <mpath href={`#${pathId}`} />
+      </animateMotion>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin={`${delay}s`} />
+    </circle>
+  );
+}
+
 function ArchitectureFlow() {
   const consumers = [
     { emoji: "🌐", label: "Web App" },
@@ -54,19 +62,19 @@ function ArchitectureFlow() {
     { emoji: "🤖", label: "AI Agent" },
     { emoji: "🔌", label: "API Client" },
   ];
-  const providers = [
-    { name: "OpenAI", color: "from-emerald-400 to-emerald-600" },
-    { name: "Claude", color: "from-amber-300 to-amber-500" },
-    { name: "Gemini", color: "from-blue-400 to-violet-500" },
-    { name: "DeepSeek", color: "from-blue-400 to-blue-600" },
-    { name: "Mistral", color: "from-orange-400 to-red-500" },
+  const providerList = [
+    { name: "OpenAI", Logo: OpenAILogo, color: "#10A37F" },
+    { name: "Claude", Logo: AnthropicLogo, color: "#D4A574" },
+    { name: "Gemini", Logo: GeminiLogo, color: "#4285F4" },
+    { name: "DeepSeek", Logo: DeepSeekLogo, color: "#4D6BFE" },
+    { name: "Mistral", Logo: MistralLogo, color: "#F7D046" },
   ];
   const features = ["Authentication", "Rate Limiting", "Load Balancing", "Observability"];
 
   return (
     <div className="relative hidden lg:block">
-      {/* Glow */}
-      <div className="absolute -inset-8 bg-[#6D49FF]/8 rounded-3xl blur-[48px]" />
+      {/* Subtle glow */}
+      <div className="absolute -inset-8 bg-[#6D49FF]/5 rounded-3xl blur-[48px]" />
 
       <div className="relative flex items-center justify-between gap-3">
         {/* Left: Consumers */}
@@ -83,19 +91,29 @@ function ArchitectureFlow() {
           ))}
         </div>
 
-        {/* Left Lines */}
+        {/* Left Lines with flowing particles */}
         <div className="shrink-0 w-10 h-[280px] relative">
           <svg className="absolute inset-0 w-full h-full" viewBox="0 0 40 280" fill="none">
-            <path d="M0,35 C20,35 20,140 40,140" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.4" className="animate-draw-line" style={{ animationDelay: "0.8s" }} />
-            <path d="M0,105 C20,105 20,140 40,140" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.4" className="animate-draw-line" style={{ animationDelay: "0.9s" }} />
-            <path d="M0,175 C20,175 20,140 40,140" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.4" className="animate-draw-line" style={{ animationDelay: "1.0s" }} />
-            <path d="M0,245 C20,245 20,140 40,140" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.4" className="animate-draw-line" style={{ animationDelay: "1.1s" }} />
+            <defs>
+              <path id="left-path-1" d="M0,35 C20,35 20,140 40,140" />
+              <path id="left-path-2" d="M0,105 C20,105 20,140 40,140" />
+              <path id="left-path-3" d="M0,175 C20,175 20,140 40,140" />
+              <path id="left-path-4" d="M0,245 C20,245 20,140 40,140" />
+            </defs>
+            <use href="#left-path-1" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.3" />
+            <use href="#left-path-2" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.3" />
+            <use href="#left-path-3" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.3" />
+            <use href="#left-path-4" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.3" />
+            {/* Flowing particles */}
+            <DataFlowParticle delay={0} pathId="left-path-1" />
+            <DataFlowParticle delay={0.5} pathId="left-path-2" />
+            <DataFlowParticle delay={1.0} pathId="left-path-3" />
+            <DataFlowParticle delay={1.5} pathId="left-path-4" />
+            <DataFlowParticle delay={1.0} pathId="left-path-1" />
+            <DataFlowParticle delay={1.5} pathId="left-path-2" />
+            <DataFlowParticle delay={0.3} pathId="left-path-3" />
+            <DataFlowParticle delay={0.8} pathId="left-path-4" />
           </svg>
-          {/* Animated dots */}
-          <div className="absolute w-1.5 h-1.5 rounded-full bg-[#6D49FF] animate-dot-right" style={{ top: "35px", left: "0", animationDelay: "1.2s" }} />
-          <div className="absolute w-1.5 h-1.5 rounded-full bg-[#6D49FF] animate-dot-right" style={{ top: "105px", left: "0", animationDelay: "1.5s" }} />
-          <div className="absolute w-1.5 h-1.5 rounded-full bg-[#6D49FF] animate-dot-right" style={{ top: "175px", left: "0", animationDelay: "1.8s" }} />
-          <div className="absolute w-1.5 h-1.5 rounded-full bg-[#6D49FF] animate-dot-right" style={{ top: "245px", left: "0", animationDelay: "2.1s" }} />
         </div>
 
         {/* Center: Gateway */}
@@ -134,31 +152,78 @@ function ArchitectureFlow() {
           </div>
         </div>
 
-        {/* Right Lines */}
+        {/* Right Lines with flowing particles (gateway → providers) */}
         <div className="shrink-0 w-10 h-[280px] relative">
           <svg className="absolute inset-0 w-full h-full" viewBox="0 0 40 280" fill="none">
-            <path d="M0,140 C20,140 20,28 40,28" stroke="white" strokeWidth="1" strokeOpacity="0.15" className="animate-draw-line" style={{ animationDelay: "1.0s" }} />
-            <path d="M0,140 C20,140 20,84 40,84" stroke="white" strokeWidth="1" strokeOpacity="0.15" className="animate-draw-line" style={{ animationDelay: "1.1s" }} />
-            <path d="M0,140 C20,140 20,140 40,140" stroke="white" strokeWidth="1" strokeOpacity="0.15" className="animate-draw-line" style={{ animationDelay: "1.2s" }} />
-            <path d="M0,140 C20,140 20,196 40,196" stroke="white" strokeWidth="1" strokeOpacity="0.15" className="animate-draw-line" style={{ animationDelay: "1.3s" }} />
-            <path d="M0,140 C20,140 20,252 40,252" stroke="white" strokeWidth="1" strokeOpacity="0.15" className="animate-draw-line" style={{ animationDelay: "1.4s" }} />
+            <defs>
+              <path id="right-path-1" d="M0,140 C20,140 20,28 40,28" />
+              <path id="right-path-2" d="M0,140 C20,140 20,84 40,84" />
+              <path id="right-path-3" d="M0,140 C20,140 20,140 40,140" />
+              <path id="right-path-4" d="M0,140 C20,140 20,196 40,196" />
+              <path id="right-path-5" d="M0,140 C20,140 20,252 40,252" />
+            </defs>
+            <use href="#right-path-1" stroke="white" strokeWidth="1" strokeOpacity="0.12" />
+            <use href="#right-path-2" stroke="white" strokeWidth="1" strokeOpacity="0.12" />
+            <use href="#right-path-3" stroke="white" strokeWidth="1" strokeOpacity="0.12" />
+            <use href="#right-path-4" stroke="white" strokeWidth="1" strokeOpacity="0.12" />
+            <use href="#right-path-5" stroke="white" strokeWidth="1" strokeOpacity="0.12" />
+            {/* Flowing particles from gateway to providers */}
+            <circle r="2" fill="#E31836" opacity="0.8">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0s"><mpath href="#right-path-1" /></animateMotion>
+              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.8s" repeatCount="indefinite" begin="0s" />
+            </circle>
+            <circle r="2" fill="#E31836" opacity="0.8">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.4s"><mpath href="#right-path-2" /></animateMotion>
+              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.8s" repeatCount="indefinite" begin="0.4s" />
+            </circle>
+            <circle r="2" fill="#E31836" opacity="0.8">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.8s"><mpath href="#right-path-3" /></animateMotion>
+              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.8s" repeatCount="indefinite" begin="0.8s" />
+            </circle>
+            <circle r="2" fill="#E31836" opacity="0.8">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.2s"><mpath href="#right-path-4" /></animateMotion>
+              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.8s" repeatCount="indefinite" begin="1.2s" />
+            </circle>
+            <circle r="2" fill="#E31836" opacity="0.8">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.6s"><mpath href="#right-path-5" /></animateMotion>
+              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.8s" repeatCount="indefinite" begin="1.6s" />
+            </circle>
+            {/* Second wave */}
+            <circle r="2" fill="#6D49FF" opacity="0.7">
+              <animateMotion dur="2.2s" repeatCount="indefinite" begin="0.9s"><mpath href="#right-path-1" /></animateMotion>
+              <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" repeatCount="indefinite" begin="0.9s" />
+            </circle>
+            <circle r="2" fill="#6D49FF" opacity="0.7">
+              <animateMotion dur="2.2s" repeatCount="indefinite" begin="1.3s"><mpath href="#right-path-3" /></animateMotion>
+              <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" repeatCount="indefinite" begin="1.3s" />
+            </circle>
+            <circle r="2" fill="#6D49FF" opacity="0.7">
+              <animateMotion dur="2.2s" repeatCount="indefinite" begin="1.7s"><mpath href="#right-path-5" /></animateMotion>
+              <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" repeatCount="indefinite" begin="1.7s" />
+            </circle>
           </svg>
         </div>
 
-        {/* Right: Providers */}
-        <div className="flex flex-col gap-2.5 w-[120px] shrink-0">
-          {providers.map((p, i) => (
-            <div
-              key={p.name}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/6 bg-white/2 hover:bg-white/4 hover:border-white/12 transition-all animate-fade-in-right"
-              style={{ animationDelay: `${0.8 + i * 0.05}s`, animationFillMode: "both" }}
-            >
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center bg-gradient-to-br ${p.color} text-white text-[10px] font-bold font-[Sora] shrink-0`}>
-                {p.name[0]}
+        {/* Right: Providers with official logos */}
+        <div className="flex flex-col gap-2.5 w-[130px] shrink-0">
+          {providerList.map((p, i) => {
+            const Logo = p.Logo;
+            return (
+              <div
+                key={p.name}
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/6 bg-white/2 hover:bg-white/5 hover:border-white/15 transition-all animate-fade-in-right group"
+                style={{ animationDelay: `${0.8 + i * 0.05}s`, animationFillMode: "both" }}
+              >
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"
+                  style={{ backgroundColor: p.color + "18" }}
+                >
+                  <Logo size={16} className="text-white" />
+                </div>
+                <span className="text-[11px] text-slate-300 font-medium font-[Outfit]">{p.name}</span>
               </div>
-              <span className="text-[11px] text-slate-300 font-medium font-[Outfit]">{p.name}</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
@@ -168,15 +233,14 @@ function ArchitectureFlow() {
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center pt-28 pb-16 overflow-hidden">
-      {/* Background */}
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-30"
-        style={{ backgroundImage: `url(${HERO_BG})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#030712]/40 via-[#030712]/60 to-[#030712]" />
+      {/* Simplified background — subtle gradient + grid, no heavy image */}
+      <div className="absolute inset-0 bg-[#030712]" />
+      {/* Subtle radial glow */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[radial-gradient(ellipse_at_center,rgba(109,73,255,0.06),transparent_70%)]" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(227,24,54,0.04),transparent_70%)]" />
 
       {/* Grid overlay */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
+      <div className="absolute inset-0 opacity-[0.025]" style={{
         backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
         backgroundSize: "60px 60px"
       }} />
@@ -224,7 +288,7 @@ export default function HeroSection() {
               </a>
             </div>
 
-            {/* Stats — 3 key metrics */}
+            {/* Stats */}
             <div className="grid grid-cols-3 gap-6">
               <div>
                 <div className="text-2xl sm:text-3xl font-bold text-white font-[Sora]">
