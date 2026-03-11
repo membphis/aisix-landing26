@@ -191,14 +191,14 @@ export default function CodeSection() {
             </div>
 
             {/* Description */}
-            <p className="text-slate-400 mb-6 leading-relaxed font-[Outfit]">
+            <p className="text-slate-200 mb-6 leading-relaxed font-[Outfit] text-base">
               {currentTab.description}
             </p>
 
             {/* Bullet points */}
             <ul className="flex flex-col gap-3">
               {currentTab.bullets.map((item) => (
-                <li key={item} className="flex items-center gap-3 text-sm text-slate-300 font-[Outfit]">
+                <li key={item} className="flex items-center gap-3 text-base text-slate-200 font-[Outfit]">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#6D49FF] shrink-0" />
                   {item}
                 </li>
