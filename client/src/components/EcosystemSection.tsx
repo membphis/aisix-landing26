@@ -110,17 +110,23 @@ export default function EcosystemSection() {
             </div>
           </div>
 
-          {/* Right: Large Ecosystem Illustration — height matches left grid */}
-          <div className="hidden lg:block">
-            <div className="relative h-full">
+          {/* Right: Large Ecosystem Illustration — cropped to match left grid height */}
+          <div className="hidden lg:flex items-stretch">
+            <div className="relative w-full">
               {/* Glow behind image */}
               <div className="absolute -inset-6 bg-[#6D49FF]/8 rounded-2xl blur-[50px]" />
               <div className="relative rounded-2xl overflow-hidden border border-white/8 h-full">
-                <img
-                  src={ECOSYSTEM_IMG}
-                  alt="AI Gateway Ecosystem"
-                  className="w-full h-full object-cover opacity-85 hover:opacity-100 transition-opacity duration-500"
-                  loading="lazy"
+                {/* Use a div with background-image to precisely crop the center portion */}
+                <div
+                  className="w-full h-full min-h-[100%] opacity-85 hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    backgroundImage: `url(${ECOSYSTEM_IMG})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center center',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                  role="img"
+                  aria-label="AI Gateway Ecosystem"
                 />
                 {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#030712]/50 via-transparent to-[#030712]/20" />
