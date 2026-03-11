@@ -83,7 +83,7 @@ export default function EcosystemSection() {
         {/* Layout: 3x3 Grid + Large Image */}
         <div
           ref={gridRef}
-          className={`grid lg:grid-cols-[1fr_1fr] gap-10 items-center transition-all duration-700 ${
+          className={`grid lg:grid-cols-[1fr_1fr] gap-10 items-stretch transition-all duration-700 ${
             gridVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
@@ -110,16 +110,16 @@ export default function EcosystemSection() {
             </div>
           </div>
 
-          {/* Right: Large Ecosystem Illustration */}
+          {/* Right: Large Ecosystem Illustration — height matches left grid */}
           <div className="hidden lg:block">
-            <div className="relative">
+            <div className="relative h-full">
               {/* Glow behind image */}
               <div className="absolute -inset-6 bg-[#6D49FF]/8 rounded-2xl blur-[50px]" />
-              <div className="relative rounded-2xl overflow-hidden border border-white/8">
+              <div className="relative rounded-2xl overflow-hidden border border-white/8 h-full">
                 <img
                   src={ECOSYSTEM_IMG}
                   alt="AI Gateway Ecosystem"
-                  className="w-full h-auto object-cover opacity-85 hover:opacity-100 transition-opacity duration-500"
+                  className="w-full h-full object-cover opacity-85 hover:opacity-100 transition-opacity duration-500"
                   loading="lazy"
                 />
                 {/* Overlay gradient */}

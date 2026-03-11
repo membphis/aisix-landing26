@@ -1,12 +1,13 @@
 /*
  * Design: Cybernetic Brutalism
  * Architecture — HOW IT WORKS
- * V3: CP→4 middleware split arrows with animation, 4 middleware→DP split arrows with animation,
- *     right-side cards use white glowing border (same as Core Value Proposition)
+ * V3.1: Fix Admin→CP arrow animation (use animateMotion on path),
+ *       Fix DP→LLMs: change single arrow to 5 fan-out curves with animateMotion,
+ *       Right-side cards unchanged (white glowing border)
  */
 import { useReveal } from "@/hooks/useReveal";
 import {
-  Monitor, Server, Database, Activity, BarChart3, FileText,
+  Monitor, Server, Database, Activity, FileText,
   Cpu, Layers, Settings, Shield
 } from "lucide-react";
 import { OpenAILogo, DeepSeekLogo, AnthropicLogo, GeminiLogo, MistralLogo } from "./ProviderLogos";
@@ -49,24 +50,26 @@ function ArchDiagram() {
           </div>
         </div>
 
-        {/* Arrow: Admin → CP (single) */}
+        {/* Arrow: Admin → CP — FIXED: use animateMotion along the path */}
         <div className="flex justify-center mb-4">
-          <div className="relative h-8 w-8">
-            <svg className="w-full h-full" viewBox="0 0 32 32" fill="none">
-              <line x1="16" y1="0" x2="16" y2="28" stroke="url(#grad-purple)" strokeWidth="1.5" />
-              <polygon points="12,24 16,32 20,24" fill="#6D49FF" />
-              <circle r="2" fill="#6D49FF" opacity="0.9">
-                <animate attributeName="cy" values="0;28" dur="1.5s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" repeatCount="indefinite" />
-              </circle>
-              <defs>
-                <linearGradient id="grad-purple" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="rgba(255,255,255,0.2)" />
-                  <stop offset="100%" stopColor="rgba(109,73,255,0.5)" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
+          <svg className="w-[40px] h-[32px]" viewBox="0 0 40 32" fill="none">
+            <defs>
+              <path id="admin-cp-path" d="M20,0 L20,28" />
+              <linearGradient id="grad-purple-v2" x1="20" y1="0" x2="20" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.2)" />
+                <stop offset="100%" stopColor="rgba(109,73,255,0.5)" />
+              </linearGradient>
+            </defs>
+            <use href="#admin-cp-path" stroke="url(#grad-purple-v2)" strokeWidth="1.5" />
+            <polygon points="16,24 20,32 24,24" fill="#6D49FF" />
+            {/* Dot follows the line path */}
+            <circle r="2" fill="#6D49FF" opacity="0.9">
+              <animateMotion dur="1.5s" repeatCount="indefinite" begin="0s">
+                <mpath href="#admin-cp-path" />
+              </animateMotion>
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" repeatCount="indefinite" begin="0s" />
+            </circle>
+          </svg>
         </div>
 
         {/* Row 2: Control Plane */}
@@ -89,26 +92,31 @@ function ArchDiagram() {
         {/* SPLIT ARROWS: CP → 4 Middleware (fan-out) */}
         <div className="flex justify-center mb-4">
           <svg className="w-[320px] h-10" viewBox="0 0 320 40" fill="none">
-            {/* Center point at top, 4 endpoints at bottom */}
-            <path d="M160,0 C160,20 40,20 40,40" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
-            <path d="M160,0 C160,20 120,20 120,40" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
-            <path d="M160,0 C160,20 200,20 200,40" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
-            <path d="M160,0 C160,20 280,20 280,40" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
-            {/* Animated dots */}
+            <defs>
+              <path id="cp-mw-1" d="M160,0 C160,20 40,20 40,40" />
+              <path id="cp-mw-2" d="M160,0 C160,20 120,20 120,40" />
+              <path id="cp-mw-3" d="M160,0 C160,20 200,20 200,40" />
+              <path id="cp-mw-4" d="M160,0 C160,20 280,20 280,40" />
+            </defs>
+            <use href="#cp-mw-1" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
+            <use href="#cp-mw-2" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
+            <use href="#cp-mw-3" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
+            <use href="#cp-mw-4" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
+            {/* Animated dots following paths */}
             <circle r="2" fill="#6D49FF" opacity="0.9">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0s" path="M160,0 C160,20 40,20 40,40" />
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0s"><mpath href="#cp-mw-1" /></animateMotion>
               <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0s" />
             </circle>
             <circle r="2" fill="#a78bfa" opacity="0.9">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.4s" path="M160,0 C160,20 120,20 120,40" />
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.4s"><mpath href="#cp-mw-2" /></animateMotion>
               <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0.4s" />
             </circle>
             <circle r="2" fill="#a78bfa" opacity="0.9">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.8s" path="M160,0 C160,20 200,20 200,40" />
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.8s"><mpath href="#cp-mw-3" /></animateMotion>
               <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0.8s" />
             </circle>
             <circle r="2" fill="#6D49FF" opacity="0.9">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.2s" path="M160,0 C160,20 280,20 280,40" />
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.2s"><mpath href="#cp-mw-4" /></animateMotion>
               <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="1.2s" />
             </circle>
             {/* Arrow tips */}
@@ -139,26 +147,31 @@ function ArchDiagram() {
         {/* SPLIT ARROWS: 4 Middleware → DP (fan-in) */}
         <div className="flex justify-center mb-4">
           <svg className="w-[320px] h-10" viewBox="0 0 320 40" fill="none">
-            {/* 4 start points at top, center point at bottom */}
-            <path d="M40,0 C40,20 160,20 160,40" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
-            <path d="M120,0 C120,20 160,20 160,40" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
-            <path d="M200,0 C200,20 160,20 160,40" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
-            <path d="M280,0 C280,20 160,20 160,40" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
-            {/* Animated dots */}
+            <defs>
+              <path id="mw-dp-1" d="M40,0 C40,20 160,20 160,40" />
+              <path id="mw-dp-2" d="M120,0 C120,20 160,20 160,40" />
+              <path id="mw-dp-3" d="M200,0 C200,20 160,20 160,40" />
+              <path id="mw-dp-4" d="M280,0 C280,20 160,20 160,40" />
+            </defs>
+            <use href="#mw-dp-1" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
+            <use href="#mw-dp-2" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
+            <use href="#mw-dp-3" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
+            <use href="#mw-dp-4" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
+            {/* Animated dots following paths */}
             <circle r="2" fill="#E31836" opacity="0.9">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0s" path="M40,0 C40,20 160,20 160,40" />
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0s"><mpath href="#mw-dp-1" /></animateMotion>
               <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0s" />
             </circle>
             <circle r="2" fill="#ff6b6b" opacity="0.9">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.5s" path="M120,0 C120,20 160,20 160,40" />
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.5s"><mpath href="#mw-dp-2" /></animateMotion>
               <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0.5s" />
             </circle>
             <circle r="2" fill="#ff6b6b" opacity="0.9">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.0s" path="M200,0 C200,20 160,20 160,40" />
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.0s"><mpath href="#mw-dp-3" /></animateMotion>
               <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="1.0s" />
             </circle>
             <circle r="2" fill="#E31836" opacity="0.9">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.5s" path="M280,0 C280,20 160,20 160,40" />
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.5s"><mpath href="#mw-dp-4" /></animateMotion>
               <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="1.5s" />
             </circle>
             {/* Arrow tip at center bottom */}
@@ -183,24 +196,49 @@ function ArchDiagram() {
           </div>
         </div>
 
-        {/* Arrow: DP → LLMs */}
+        {/* SPLIT ARROWS: DP → 5 LLM Providers (fan-out) — FIXED: multiple curves instead of single line */}
         <div className="flex justify-center mb-4">
-          <div className="relative h-8 w-8">
-            <svg className="w-full h-full" viewBox="0 0 32 32" fill="none">
-              <line x1="16" y1="0" x2="16" y2="28" stroke="url(#grad-red)" strokeWidth="1.5" />
-              <polygon points="12,24 16,32 20,24" fill="#E31836" />
-              <circle r="2" fill="#E31836" opacity="0.9">
-                <animate attributeName="cy" values="0;28" dur="1.5s" repeatCount="indefinite" begin="0.5s" />
-                <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" repeatCount="indefinite" begin="0.5s" />
-              </circle>
-              <defs>
-                <linearGradient id="grad-red" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="rgba(227,24,54,0.5)" />
-                  <stop offset="100%" stopColor="rgba(255,255,255,0.2)" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
+          <svg className="w-[320px] h-10" viewBox="0 0 320 40" fill="none">
+            <defs>
+              <path id="dp-llm-1" d="M160,0 C160,20 32,20 32,40" />
+              <path id="dp-llm-2" d="M160,0 C160,20 96,20 96,40" />
+              <path id="dp-llm-3" d="M160,0 C160,20 160,20 160,40" />
+              <path id="dp-llm-4" d="M160,0 C160,20 224,20 224,40" />
+              <path id="dp-llm-5" d="M160,0 C160,20 288,20 288,40" />
+            </defs>
+            <use href="#dp-llm-1" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.25" />
+            <use href="#dp-llm-2" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.25" />
+            <use href="#dp-llm-3" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.25" />
+            <use href="#dp-llm-4" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.25" />
+            <use href="#dp-llm-5" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.25" />
+            {/* Animated dots following paths */}
+            <circle r="2" fill="#E31836" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0s"><mpath href="#dp-llm-1" /></animateMotion>
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0s" />
+            </circle>
+            <circle r="2" fill="#ff6b6b" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.35s"><mpath href="#dp-llm-2" /></animateMotion>
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0.35s" />
+            </circle>
+            <circle r="2" fill="#E31836" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.7s"><mpath href="#dp-llm-3" /></animateMotion>
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0.7s" />
+            </circle>
+            <circle r="2" fill="#ff6b6b" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.05s"><mpath href="#dp-llm-4" /></animateMotion>
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="1.05s" />
+            </circle>
+            <circle r="2" fill="#E31836" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.4s"><mpath href="#dp-llm-5" /></animateMotion>
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="1.4s" />
+            </circle>
+            {/* Arrow tips at each endpoint */}
+            <polygon points="29,36 32,42 35,36" fill="#E31836" opacity="0.4" />
+            <polygon points="93,36 96,42 99,36" fill="#E31836" opacity="0.4" />
+            <polygon points="157,36 160,42 163,36" fill="#E31836" opacity="0.4" />
+            <polygon points="221,36 224,42 227,36" fill="#E31836" opacity="0.4" />
+            <polygon points="285,36 288,42 291,36" fill="#E31836" opacity="0.4" />
+          </svg>
         </div>
 
         {/* Row 5: LLM Providers with official logos */}
