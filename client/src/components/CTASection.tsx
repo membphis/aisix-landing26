@@ -12,7 +12,7 @@ export default function CTASection() {
   const { ref, visible } = useReveal();
 
   return (
-    <section className="relative py-32 overflow-hidden">
+    <section className="relative py-20 overflow-hidden">
       {/* Divider */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] max-w-3xl h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 

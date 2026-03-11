@@ -88,7 +88,7 @@ export default function FeaturesSection() {
   const { ref: headerRef, visible: headerVisible } = useReveal();
 
   return (
-    <section id="features" className="relative py-24 overflow-hidden">
+    <section id="features" className="relative py-16 overflow-hidden">
       {/* Divider */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] max-w-3xl h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
@@ -96,7 +96,7 @@ export default function FeaturesSection() {
         {/* Header */}
         <div
           ref={headerRef}
-          className={`text-center max-w-2xl mx-auto mb-16 transition-all duration-700 ${
+          className={`text-center max-w-2xl mx-auto mb-10 transition-all duration-700 ${
             headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >

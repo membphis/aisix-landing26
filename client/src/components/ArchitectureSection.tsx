@@ -44,7 +44,7 @@ function ArchDiagram() {
           <div className="flex items-center gap-3 px-5 py-3 rounded-xl border border-white/10 bg-white/3 hover:bg-white/5 hover:border-white/15 transition-all hover:scale-[1.03] cursor-default">
             <Monitor className="w-5 h-5 text-slate-400" />
             <div>
-              <div className="text-sm font-semibold text-white font-[Sora]">Admin User</div>
+              <div className="text-base font-bold text-white font-[Sora]">Admin User</div>
               <div className="text-[10px] text-slate-500 font-[Outfit]">Browser / Dashboard</div>
             </div>
           </div>
@@ -82,7 +82,7 @@ function ArchDiagram() {
             <div className="relative z-10 text-center">
               <div className="flex items-center justify-center gap-2 mb-1">
                 <Settings className="w-4 h-4 text-[#a78bfa]" />
-                <span className="text-sm font-bold text-white font-[Sora]">Control Plane (CP)</span>
+                <span className="text-base font-bold text-white font-[Sora]">Control Plane (CP)</span>
               </div>
               <div className="text-[11px] text-slate-400 font-[Outfit]">AI Gateway Control Plane · Rust · Stateless</div>
             </div>
@@ -137,8 +137,8 @@ function ArchDiagram() {
                 className={`flex flex-col items-center gap-1.5 px-3 py-3 rounded-lg border ${item.border} bg-white/2 ${item.bgHover} hover:scale-[1.08] hover:border-opacity-60 transition-all duration-300 cursor-default group`}
               >
                 <Icon className={`w-4 h-4 ${item.color} group-hover:scale-110 transition-transform`} />
-                <span className="text-xs font-semibold text-white font-[Sora]">{item.name}</span>
-                <span className="text-[9px] text-slate-500 font-[Outfit]">{item.desc}</span>
+                <span className="text-sm font-bold text-white font-[Sora]">{item.name}</span>
+                <span className="text-[10px] text-slate-500 font-[Outfit]">{item.desc}</span>
               </div>
             );
           })}
@@ -189,7 +189,7 @@ function ArchDiagram() {
             <div className="relative z-10 text-center">
               <div className="flex items-center justify-center gap-2 mb-1">
                 <Shield className="w-4 h-4 text-red-400" />
-                <span className="text-sm font-bold text-white font-[Sora]">Data Plane (DP)</span>
+                <span className="text-base font-bold text-white font-[Sora]">Data Plane (DP)</span>
               </div>
               <div className="text-[11px] text-slate-400 font-[Outfit]">AI Gateway Data Plane · Rust · Stateless · Horizontally Scalable</div>
             </div>
@@ -281,7 +281,7 @@ export default function ArchitectureSection() {
   ];
 
   return (
-    <section id="architecture" className="relative py-24 overflow-hidden">
+    <section id="architecture" className="relative py-16 overflow-hidden">
       {/* Divider */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] max-w-3xl h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
@@ -289,7 +289,7 @@ export default function ArchitectureSection() {
         {/* Header */}
         <div
           ref={headerRef}
-          className={`text-center max-w-2xl mx-auto mb-16 transition-all duration-700 ${
+          className={`text-center max-w-2xl mx-auto mb-10 transition-all duration-700 ${
             headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >

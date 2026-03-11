@@ -217,7 +217,7 @@ function ArchitectureFlow() {
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center pt-28 pb-16 overflow-hidden">
+    <section className="relative min-h-screen flex items-center pt-28 pb-8 overflow-hidden">
       {/* V3: User-provided background image with hexagonal pattern */}
       <div className="absolute inset-0">
         <img

@@ -143,10 +143,10 @@ export default function CodeSection() {
   const currentTab = tabs[activeTab];
 
   return (
-    <section id="docs" className="relative py-24 overflow-hidden">
+    <section id="docs" className="relative py-16 overflow-hidden">
       <div className="container">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="inline-block text-xs font-semibold tracking-[0.12em] uppercase text-[#a78bfa] mb-4 font-[Outfit]">
             — DEVELOPER EXPERIENCE
           </span>
