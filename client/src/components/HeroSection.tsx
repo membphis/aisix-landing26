@@ -1,11 +1,14 @@
 /*
  * Design: Cybernetic Brutalism
  * Hero — Left text + Right architecture flow diagram
- * UPDATES: Official LLM logos, data flow particles from gateway to providers, simplified background
+ * V3: User-provided background image, Gateway feature icons (unified color), enlarged Gateway,
+ *     interactive hover effects on all cards/buttons in the flow diagram
  */
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Github, BookOpen } from "lucide-react";
+import { ArrowRight, Github, BookOpen, Shield, Gauge, BarChart3, Eye } from "lucide-react";
 import { OpenAILogo, AnthropicLogo, GeminiLogo, DeepSeekLogo, MistralLogo } from "./ProviderLogos";
+
+const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663281797301/B5D8znjtLgNMM5PodSZYSz/hero-bg-v3_923a8bd7.png";
 
 function AnimatedCounter({ target, suffix = "", prefix = "", decimals = 0, duration = 1800 }: { target: number; suffix?: string; prefix?: string; decimals?: number; duration?: number }) {
   const [value, setValue] = useState(prefix + "0" + suffix);
@@ -43,10 +46,10 @@ function AnimatedCounter({ target, suffix = "", prefix = "", decimals = 0, durat
   return <span ref={ref}>{value}</span>;
 }
 
-/* Data flow particle component - animated dots flowing from gateway to providers */
-function DataFlowParticle({ delay, pathId }: { delay: number; pathId: string }) {
+/* Data flow particle component */
+function DataFlowParticle({ delay, pathId, color = "#6D49FF" }: { delay: number; pathId: string; color?: string }) {
   return (
-    <circle r="2.5" fill="#6D49FF" opacity="0.9">
+    <circle r="2.5" fill={color} opacity="0.9">
       <animateMotion dur="2s" repeatCount="indefinite" begin={`${delay}s`}>
         <mpath href={`#${pathId}`} />
       </animateMotion>
@@ -69,7 +72,12 @@ function ArchitectureFlow() {
     { name: "DeepSeek", Logo: DeepSeekLogo, color: "#4D6BFE" },
     { name: "Mistral", Logo: MistralLogo, color: "#F7D046" },
   ];
-  const features = ["Authentication", "Rate Limiting", "Load Balancing", "Observability"];
+  const features = [
+    { name: "Authentication", Icon: Shield },
+    { name: "Rate Limiting", Icon: Gauge },
+    { name: "Load Balancing", Icon: BarChart3 },
+    { name: "Observability", Icon: Eye },
+  ];
 
   return (
     <div className="relative hidden lg:block">
@@ -82,7 +90,7 @@ function ArchitectureFlow() {
           {consumers.map((c, i) => (
             <div
               key={c.label}
-              className="px-3 py-2.5 rounded-xl border border-[#6D49FF]/25 bg-[#6D49FF]/7 text-center backdrop-blur-sm animate-fade-in-left"
+              className="px-3 py-2.5 rounded-xl border border-[#6D49FF]/25 bg-[#6D49FF]/7 text-center backdrop-blur-sm animate-fade-in-left hover:border-[#6D49FF]/50 hover:bg-[#6D49FF]/12 hover:scale-105 transition-all duration-300 cursor-default"
               style={{ animationDelay: `${0.5 + i * 0.1}s`, animationFillMode: "both" }}
             >
               <div className="text-base mb-0.5">{c.emoji}</div>
@@ -104,7 +112,6 @@ function ArchitectureFlow() {
             <use href="#left-path-2" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.3" />
             <use href="#left-path-3" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.3" />
             <use href="#left-path-4" stroke="#6D49FF" strokeWidth="1.5" strokeOpacity="0.3" />
-            {/* Flowing particles */}
             <DataFlowParticle delay={0} pathId="left-path-1" />
             <DataFlowParticle delay={0.5} pathId="left-path-2" />
             <DataFlowParticle delay={1.0} pathId="left-path-3" />
@@ -116,11 +123,11 @@ function ArchitectureFlow() {
           </svg>
         </div>
 
-        {/* Center: Gateway */}
+        {/* Center: Gateway — ENLARGED */}
         <div className="shrink-0 animate-fade-in-scale" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
           <div className="relative">
-            <div className="absolute -inset-6 bg-[#6D49FF]/8 rounded-2xl blur-[32px]" />
-            <div className="relative rounded-xl border border-[#6D49FF]/30 bg-gradient-to-b from-[#6D49FF]/8 to-[#E31836]/4 p-4 backdrop-blur-sm min-w-[150px] overflow-hidden">
+            <div className="absolute -inset-8 bg-[#6D49FF]/10 rounded-2xl blur-[36px]" />
+            <div className="relative rounded-xl border border-[#6D49FF]/30 bg-gradient-to-b from-[#6D49FF]/8 to-[#E31836]/4 p-5 backdrop-blur-sm min-w-[175px] overflow-hidden">
               {/* Spinning border */}
               <div className="absolute inset-0 rounded-xl overflow-hidden">
                 <div className="absolute -inset-px rounded-xl bg-[conic-gradient(from_0deg,transparent,rgba(109,73,255,0.3),transparent,rgba(227,24,54,0.3),transparent)] animate-spin-slow" />
@@ -129,23 +136,27 @@ function ArchitectureFlow() {
 
               <div className="relative z-10">
                 <div className="flex items-center justify-center mb-3">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#070F54] to-[#E31836] text-white text-xs font-bold font-[Sora]">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#070F54] to-[#E31836] text-white text-sm font-bold font-[Sora] shadow-lg shadow-[#6D49FF]/20">
                     AI
                   </div>
                 </div>
-                <div className="text-center mb-3 text-xs font-bold text-white font-[Sora]">
+                <div className="text-center mb-4 text-sm font-bold text-white font-[Sora]">
                   AISIX Gateway
                 </div>
-                <div className="flex flex-col gap-1.5">
-                  {features.map((f, i) => (
-                    <div
-                      key={f}
-                      className="px-2.5 py-1.5 rounded-md bg-white/4 border border-white/6 text-[10px] text-slate-400 text-center font-[Outfit] animate-fade-in-up"
-                      style={{ animationDelay: `${0.6 + i * 0.08}s`, animationFillMode: "both" }}
-                    >
-                      {f}
-                    </div>
-                  ))}
+                <div className="flex flex-col gap-2">
+                  {features.map((f, i) => {
+                    const Icon = f.Icon;
+                    return (
+                      <div
+                        key={f.name}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#6D49FF]/6 border border-[#6D49FF]/15 text-[11px] text-slate-300 font-[Outfit] animate-fade-in-up hover:bg-[#6D49FF]/12 hover:border-[#6D49FF]/30 hover:text-white transition-all duration-300 cursor-default group"
+                        style={{ animationDelay: `${0.6 + i * 0.08}s`, animationFillMode: "both" }}
+                      >
+                        <Icon className="w-3.5 h-3.5 text-[#a78bfa] group-hover:text-[#c4b5fd] transition-colors shrink-0" />
+                        <span>{f.name}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -167,40 +178,14 @@ function ArchitectureFlow() {
             <use href="#right-path-3" stroke="white" strokeWidth="1" strokeOpacity="0.12" />
             <use href="#right-path-4" stroke="white" strokeWidth="1" strokeOpacity="0.12" />
             <use href="#right-path-5" stroke="white" strokeWidth="1" strokeOpacity="0.12" />
-            {/* Flowing particles from gateway to providers */}
-            <circle r="2" fill="#E31836" opacity="0.8">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0s"><mpath href="#right-path-1" /></animateMotion>
-              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.8s" repeatCount="indefinite" begin="0s" />
-            </circle>
-            <circle r="2" fill="#E31836" opacity="0.8">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.4s"><mpath href="#right-path-2" /></animateMotion>
-              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.8s" repeatCount="indefinite" begin="0.4s" />
-            </circle>
-            <circle r="2" fill="#E31836" opacity="0.8">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.8s"><mpath href="#right-path-3" /></animateMotion>
-              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.8s" repeatCount="indefinite" begin="0.8s" />
-            </circle>
-            <circle r="2" fill="#E31836" opacity="0.8">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.2s"><mpath href="#right-path-4" /></animateMotion>
-              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.8s" repeatCount="indefinite" begin="1.2s" />
-            </circle>
-            <circle r="2" fill="#E31836" opacity="0.8">
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.6s"><mpath href="#right-path-5" /></animateMotion>
-              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.8s" repeatCount="indefinite" begin="1.6s" />
-            </circle>
-            {/* Second wave */}
-            <circle r="2" fill="#6D49FF" opacity="0.7">
-              <animateMotion dur="2.2s" repeatCount="indefinite" begin="0.9s"><mpath href="#right-path-1" /></animateMotion>
-              <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" repeatCount="indefinite" begin="0.9s" />
-            </circle>
-            <circle r="2" fill="#6D49FF" opacity="0.7">
-              <animateMotion dur="2.2s" repeatCount="indefinite" begin="1.3s"><mpath href="#right-path-3" /></animateMotion>
-              <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" repeatCount="indefinite" begin="1.3s" />
-            </circle>
-            <circle r="2" fill="#6D49FF" opacity="0.7">
-              <animateMotion dur="2.2s" repeatCount="indefinite" begin="1.7s"><mpath href="#right-path-5" /></animateMotion>
-              <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" repeatCount="indefinite" begin="1.7s" />
-            </circle>
+            <DataFlowParticle delay={0} pathId="right-path-1" color="#E31836" />
+            <DataFlowParticle delay={0.4} pathId="right-path-2" color="#E31836" />
+            <DataFlowParticle delay={0.8} pathId="right-path-3" color="#E31836" />
+            <DataFlowParticle delay={1.2} pathId="right-path-4" color="#E31836" />
+            <DataFlowParticle delay={1.6} pathId="right-path-5" color="#E31836" />
+            <DataFlowParticle delay={0.9} pathId="right-path-1" color="#6D49FF" />
+            <DataFlowParticle delay={1.3} pathId="right-path-3" color="#6D49FF" />
+            <DataFlowParticle delay={1.7} pathId="right-path-5" color="#6D49FF" />
           </svg>
         </div>
 
@@ -211,7 +196,7 @@ function ArchitectureFlow() {
             return (
               <div
                 key={p.name}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/6 bg-white/2 hover:bg-white/5 hover:border-white/15 transition-all animate-fade-in-right group"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/6 bg-white/2 hover:bg-white/8 hover:border-white/20 hover:scale-105 hover:shadow-[0_0_16px_rgba(109,73,255,0.15)] transition-all duration-300 animate-fade-in-right group cursor-default"
                 style={{ animationDelay: `${0.8 + i * 0.05}s`, animationFillMode: "both" }}
               >
                 <div
@@ -220,7 +205,7 @@ function ArchitectureFlow() {
                 >
                   <Logo size={16} className="text-white" />
                 </div>
-                <span className="text-[11px] text-slate-300 font-medium font-[Outfit]">{p.name}</span>
+                <span className="text-xs text-slate-400 font-medium font-[Outfit] group-hover:text-white transition-colors">{p.name}</span>
               </div>
             );
           })}
@@ -233,24 +218,25 @@ function ArchitectureFlow() {
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center pt-28 pb-16 overflow-hidden">
-      {/* Simplified background — subtle gradient + grid, no heavy image */}
-      <div className="absolute inset-0 bg-[#030712]" />
-      {/* Subtle radial glow */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[radial-gradient(ellipse_at_center,rgba(109,73,255,0.06),transparent_70%)]" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(227,24,54,0.04),transparent_70%)]" />
-
-      {/* Grid overlay */}
-      <div className="absolute inset-0 opacity-[0.025]" style={{
-        backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-        backgroundSize: "60px 60px"
-      }} />
+      {/* V3: User-provided background image with hexagonal pattern */}
+      <div className="absolute inset-0">
+        <img
+          src={HERO_BG}
+          alt=""
+          className="w-full h-full object-cover"
+          loading="eager"
+        />
+        {/* Overlay to ensure text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#030712]/90 via-[#030712]/70 to-[#030712]/50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#030712]/40 via-transparent to-[#030712]/80" />
+      </div>
 
       <div className="container relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left: Text */}
           <div className="animate-hero-slide-in">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#6D49FF]/30 bg-[#6D49FF]/10 mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#6D49FF]/30 bg-[#6D49FF]/10 mb-8 backdrop-blur-sm">
               <span className="text-sm">🦀</span>
               <span className="text-xs text-[#a78bfa] font-medium font-[Outfit]">
                 Native AI Gateway · Built with Rust
@@ -281,7 +267,7 @@ export default function HeroSection() {
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-6 py-3 rounded-lg border border-white/10 bg-white/3 text-white font-medium font-[Outfit] text-sm hover:bg-white/6 hover:border-white/15 transition-all"
+                className="flex items-center gap-2 px-6 py-3 rounded-lg border border-white/10 bg-white/3 text-white font-medium font-[Outfit] text-sm hover:bg-white/6 hover:border-white/15 transition-all backdrop-blur-sm"
               >
                 <Github className="w-4 h-4" />
                 View on GitHub

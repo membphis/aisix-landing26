@@ -1,7 +1,7 @@
 /*
  * Design: Cybernetic Brutalism
  * CTA — Ready to Take Control of Your AI Infrastructure?
- * Deploy your native AI Gateway in minutes. Open source. Built with Rust. Production-ready.
+ * V3: Darker background overlay to match dark theme
  */
 import { useReveal } from "@/hooks/useReveal";
 import { ArrowRight, BookOpen } from "lucide-react";
@@ -13,15 +13,18 @@ export default function CTASection() {
 
   return (
     <section className="relative py-32 overflow-hidden">
-      {/* Background */}
+      {/* Divider */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] max-w-3xl h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+      {/* Background — much darker overlay */}
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-40"
+        className="absolute inset-0 bg-cover bg-center opacity-25"
         style={{ backgroundImage: `url(${CTA_BG})` }}
       />
-      <div className="absolute inset-0 bg-[#030712]/60" />
+      <div className="absolute inset-0 bg-[#030712]/80" />
 
       {/* Gradient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gradient-to-r from-[#6D49FF]/15 to-[#E31836]/15 rounded-full blur-[120px]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gradient-to-r from-[#6D49FF]/10 to-[#E31836]/10 rounded-full blur-[120px]" />
 
       <div className="container relative z-10">
         <div

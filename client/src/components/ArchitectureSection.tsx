@@ -1,75 +1,15 @@
 /*
  * Design: Cybernetic Brutalism
  * Architecture — HOW IT WORKS
- * UPDATES: Data flow animations, hover scale on components, official LLM logos, right-side card glow
+ * V3: CP→4 middleware split arrows with animation, 4 middleware→DP split arrows with animation,
+ *     right-side cards use white glowing border (same as Core Value Proposition)
  */
 import { useReveal } from "@/hooks/useReveal";
-import { useRef, useState, useCallback } from "react";
 import {
   Monitor, Server, Database, Activity, BarChart3, FileText,
-  Cpu, ArrowRight, Layers, Settings, Shield
+  Cpu, Layers, Settings, Shield
 } from "lucide-react";
 import { OpenAILogo, DeepSeekLogo, AnthropicLogo, GeminiLogo, MistralLogo } from "./ProviderLogos";
-
-/* Reusable mouse-tracking glow card */
-function GlowCard({ children, className = "", glowColor = "rgba(167,139,250,0.35)" }: { children: React.ReactNode; className?: string; glowColor?: string }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  }, []);
-
-  return (
-    <div
-      ref={cardRef}
-      className={`relative overflow-hidden ${className}`}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Gradient glow following mouse */}
-      <div
-        className="absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none z-0"
-        style={{
-          opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, ${glowColor}, transparent 60%)`,
-        }}
-      />
-      {/* Border glow */}
-      <div
-        className="absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none z-0"
-        style={{
-          opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(250px circle at ${mousePos.x}px ${mousePos.y}px, ${glowColor.replace(/[\d.]+\)$/, "0.6)")}, transparent 50%)`,
-          mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-          maskComposite: "exclude",
-          WebkitMaskComposite: "xor",
-          padding: "1px",
-        }}
-      />
-      <div className="relative z-10">{children}</div>
-    </div>
-  );
-}
-
-/* Animated flowing dot for data flow visualization */
-function FlowDot({ color = "#6D49FF", delay = 0 }: { color?: string; delay?: number }) {
-  return (
-    <div
-      className="absolute w-1.5 h-1.5 rounded-full"
-      style={{
-        backgroundColor: color,
-        boxShadow: `0 0 6px ${color}`,
-        animation: `flowDown 2.5s ease-in-out infinite`,
-        animationDelay: `${delay}s`,
-      }}
-    />
-  );
-}
 
 function ArchDiagram() {
   const { ref, visible } = useReveal(0.1, "-40px");
@@ -109,15 +49,23 @@ function ArchDiagram() {
           </div>
         </div>
 
-        {/* Animated arrow down */}
+        {/* Arrow: Admin → CP (single) */}
         <div className="flex justify-center mb-4">
-          <div className="relative flex flex-col items-center h-8">
-            <div className="w-px h-full bg-gradient-to-b from-white/20 to-[#6D49FF]/40" />
-            <ArrowRight className="w-3 h-3 text-[#6D49FF] rotate-90 -mt-0.5" />
-            {/* Flowing dot */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#6D49FF] shadow-[0_0_6px_#6D49FF]" style={{ animation: "flowDown 2s ease-in-out infinite" }} />
-            </div>
+          <div className="relative h-8 w-8">
+            <svg className="w-full h-full" viewBox="0 0 32 32" fill="none">
+              <line x1="16" y1="0" x2="16" y2="28" stroke="url(#grad-purple)" strokeWidth="1.5" />
+              <polygon points="12,24 16,32 20,24" fill="#6D49FF" />
+              <circle r="2" fill="#6D49FF" opacity="0.9">
+                <animate attributeName="cy" values="0;28" dur="1.5s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" repeatCount="indefinite" />
+              </circle>
+              <defs>
+                <linearGradient id="grad-purple" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(255,255,255,0.2)" />
+                  <stop offset="100%" stopColor="rgba(109,73,255,0.5)" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
         </div>
 
@@ -138,15 +86,37 @@ function ArchDiagram() {
           </div>
         </div>
 
-        {/* Animated arrow down */}
+        {/* SPLIT ARROWS: CP → 4 Middleware (fan-out) */}
         <div className="flex justify-center mb-4">
-          <div className="relative flex flex-col items-center h-8">
-            <div className="w-px h-full bg-gradient-to-b from-[#6D49FF]/40 to-white/20" />
-            <ArrowRight className="w-3 h-3 text-slate-500 rotate-90 -mt-0.5" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#a78bfa] shadow-[0_0_6px_#a78bfa]" style={{ animation: "flowDown 2s ease-in-out infinite 0.5s" }} />
-            </div>
-          </div>
+          <svg className="w-[320px] h-10" viewBox="0 0 320 40" fill="none">
+            {/* Center point at top, 4 endpoints at bottom */}
+            <path d="M160,0 C160,20 40,20 40,40" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
+            <path d="M160,0 C160,20 120,20 120,40" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
+            <path d="M160,0 C160,20 200,20 200,40" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
+            <path d="M160,0 C160,20 280,20 280,40" stroke="#6D49FF" strokeWidth="1.2" strokeOpacity="0.3" />
+            {/* Animated dots */}
+            <circle r="2" fill="#6D49FF" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0s" path="M160,0 C160,20 40,20 40,40" />
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0s" />
+            </circle>
+            <circle r="2" fill="#a78bfa" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.4s" path="M160,0 C160,20 120,20 120,40" />
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0.4s" />
+            </circle>
+            <circle r="2" fill="#a78bfa" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.8s" path="M160,0 C160,20 200,20 200,40" />
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0.8s" />
+            </circle>
+            <circle r="2" fill="#6D49FF" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.2s" path="M160,0 C160,20 280,20 280,40" />
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="1.2s" />
+            </circle>
+            {/* Arrow tips */}
+            <polygon points="37,36 40,42 43,36" fill="#6D49FF" opacity="0.5" />
+            <polygon points="117,36 120,42 123,36" fill="#6D49FF" opacity="0.5" />
+            <polygon points="197,36 200,42 203,36" fill="#6D49FF" opacity="0.5" />
+            <polygon points="277,36 280,42 283,36" fill="#6D49FF" opacity="0.5" />
+          </svg>
         </div>
 
         {/* Row 3: Middleware — hover scale effect */}
@@ -166,15 +136,34 @@ function ArchDiagram() {
           })}
         </div>
 
-        {/* Animated arrow down */}
+        {/* SPLIT ARROWS: 4 Middleware → DP (fan-in) */}
         <div className="flex justify-center mb-4">
-          <div className="relative flex flex-col items-center h-8">
-            <div className="w-px h-full bg-gradient-to-b from-white/20 to-[#E31836]/40" />
-            <ArrowRight className="w-3 h-3 text-[#E31836] rotate-90 -mt-0.5" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#E31836] shadow-[0_0_6px_#E31836]" style={{ animation: "flowDown 2s ease-in-out infinite 1s" }} />
-            </div>
-          </div>
+          <svg className="w-[320px] h-10" viewBox="0 0 320 40" fill="none">
+            {/* 4 start points at top, center point at bottom */}
+            <path d="M40,0 C40,20 160,20 160,40" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
+            <path d="M120,0 C120,20 160,20 160,40" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
+            <path d="M200,0 C200,20 160,20 160,40" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
+            <path d="M280,0 C280,20 160,20 160,40" stroke="#E31836" strokeWidth="1.2" strokeOpacity="0.3" />
+            {/* Animated dots */}
+            <circle r="2" fill="#E31836" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0s" path="M40,0 C40,20 160,20 160,40" />
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0s" />
+            </circle>
+            <circle r="2" fill="#ff6b6b" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.5s" path="M120,0 C120,20 160,20 160,40" />
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="0.5s" />
+            </circle>
+            <circle r="2" fill="#ff6b6b" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.0s" path="M200,0 C200,20 160,20 160,40" />
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="1.0s" />
+            </circle>
+            <circle r="2" fill="#E31836" opacity="0.9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.5s" path="M280,0 C280,20 160,20 160,40" />
+              <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="1.5s" />
+            </circle>
+            {/* Arrow tip at center bottom */}
+            <polygon points="157,36 160,42 163,36" fill="#E31836" opacity="0.5" />
+          </svg>
         </div>
 
         {/* Row 4: Data Plane */}
@@ -194,14 +183,23 @@ function ArchDiagram() {
           </div>
         </div>
 
-        {/* Animated arrow down */}
+        {/* Arrow: DP → LLMs */}
         <div className="flex justify-center mb-4">
-          <div className="relative flex flex-col items-center h-8">
-            <div className="w-px h-full bg-gradient-to-b from-[#E31836]/40 to-white/20" />
-            <ArrowRight className="w-3 h-3 text-slate-500 rotate-90 -mt-0.5" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#ff6b6b] shadow-[0_0_6px_#ff6b6b]" style={{ animation: "flowDown 2s ease-in-out infinite 1.5s" }} />
-            </div>
+          <div className="relative h-8 w-8">
+            <svg className="w-full h-full" viewBox="0 0 32 32" fill="none">
+              <line x1="16" y1="0" x2="16" y2="28" stroke="url(#grad-red)" strokeWidth="1.5" />
+              <polygon points="12,24 16,32 20,24" fill="#E31836" />
+              <circle r="2" fill="#E31836" opacity="0.9">
+                <animate attributeName="cy" values="0;28" dur="1.5s" repeatCount="indefinite" begin="0.5s" />
+                <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" repeatCount="indefinite" begin="0.5s" />
+              </circle>
+              <defs>
+                <linearGradient id="grad-red" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(227,24,54,0.5)" />
+                  <stop offset="100%" stopColor="rgba(255,255,255,0.2)" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
         </div>
 
@@ -239,9 +237,9 @@ export default function ArchitectureSection() {
   const { ref: pointsRef, visible: pointsVisible } = useReveal();
 
   const keyPoints = [
-    { icon: Layers, title: "Stateless Data Plane", desc: "Horizontally scalable with zero state — add or remove nodes instantly without data migration.", glowColor: "rgba(109,73,255,0.35)" },
-    { icon: Database, title: "etcd-Based Config", desc: "Centralized configuration management with real-time propagation and hot-reload capabilities.", glowColor: "rgba(52,211,153,0.35)" },
-    { icon: Server, title: "Separation of Concerns", desc: "Control Plane handles management; Data Plane handles traffic. Independent scaling and upgrades.", glowColor: "rgba(227,24,54,0.3)" },
+    { icon: Layers, title: "Stateless Data Plane", desc: "Horizontally scalable with zero state — add or remove nodes instantly without data migration." },
+    { icon: Database, title: "etcd-Based Config", desc: "Centralized configuration management with real-time propagation and hot-reload capabilities." },
+    { icon: Server, title: "Separation of Concerns", desc: "Control Plane handles management; Data Plane handles traffic. Independent scaling and upgrades." },
   ];
 
   return (
@@ -275,7 +273,7 @@ export default function ArchitectureSection() {
           {/* Architecture Diagram */}
           <ArchDiagram />
 
-          {/* Key Points with glow effect */}
+          {/* Key Points — white glowing border (consistent with Core Value Proposition) */}
           <div
             ref={pointsRef}
             className={`flex flex-col gap-5 transition-all duration-700 ${
@@ -285,21 +283,29 @@ export default function ArchitectureSection() {
             {keyPoints.map((point, i) => {
               const Icon = point.icon;
               return (
-                <GlowCard
+                <div
                   key={point.title}
-                  className="rounded-xl border border-white/6 bg-white/2 hover:border-white/12 transition-all"
-                  glowColor={point.glowColor}
+                  className="relative rounded-xl border border-white/6 bg-white/2 transition-all duration-500 hover:-translate-y-0.5 group overflow-hidden cursor-default"
+                  style={{ transitionDelay: `${i * 100}ms` }}
                 >
-                  <div className="p-5" style={{ transitionDelay: `${i * 100}ms` }}>
+                  {/* White glowing border on hover */}
+                  <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    style={{
+                      boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.35), 0 0 15px rgba(255,255,255,0.08), 0 0 30px rgba(255,255,255,0.04)",
+                    }}
+                  />
+                  <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-br from-white/[0.04] to-transparent" />
+
+                  <div className="relative z-10 p-5">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-9 h-9 rounded-lg bg-[#6D49FF]/10 border border-[#6D49FF]/20 flex items-center justify-center">
+                      <div className="w-9 h-9 rounded-lg bg-[#6D49FF]/10 border border-[#6D49FF]/20 flex items-center justify-center group-hover:border-white/20 group-hover:bg-white/8 transition-all duration-300">
                         <Icon className="w-4 h-4 text-[#a78bfa]" />
                       </div>
                       <h3 className="text-sm font-semibold text-white font-[Sora]">{point.title}</h3>
                     </div>
                     <p className="text-sm text-slate-400 leading-relaxed font-[Outfit]">{point.desc}</p>
                   </div>
-                </GlowCard>
+                </div>
               );
             })}
           </div>
