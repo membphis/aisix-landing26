@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeProvider } from "../contexts/ThemeContext";
-import ErrorBoundary from "../components/ErrorBoundary";
+import { ClientProviders } from "./ClientProviders";
 
 export const metadata: Metadata = {
   title: "AISIX - The Native AI Gateway for LLMs & AI Agents",
@@ -33,14 +30,9 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <ErrorBoundary>
-          <ThemeProvider defaultTheme="dark">
-            <TooltipProvider>
-              <Toaster />
-              {children}
-            </TooltipProvider>
-          </ThemeProvider>
-        </ErrorBoundary>
+        <ClientProviders>
+          {children}
+        </ClientProviders>
       </body>
     </html>
   );

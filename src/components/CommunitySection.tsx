@@ -1,3 +1,5 @@
+"use client";
+
 /*
  * Design: Cybernetic Brutalism
  * Community — Left text with stats grid + Right illustration

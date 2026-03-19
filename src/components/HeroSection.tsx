@@ -4,6 +4,9 @@
  * V3: User-provided background image, Gateway feature icons (unified color), enlarged Gateway,
  *     interactive hover effects on all cards/buttons in the flow diagram
  */
+
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Github, BookOpen, Shield, Gauge, BarChart3, Eye } from "lucide-react";
 import { OpenAILogo, AnthropicLogo, GeminiLogo, DeepSeekLogo, MistralLogo } from "./ProviderLogos";
