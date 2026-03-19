@@ -4,7 +4,7 @@
  * V3: Darker background overlay to match dark theme
  */
 import { useReveal } from "@/hooks/useReveal";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const CTA_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663281797301/B5D8znjtLgNMM5PodSZYSz/cta-bg-AnAAQkFLowBNhsdxvutGUX.webp";
 
@@ -44,14 +44,24 @@ export default function CTASection() {
             Deploy your native AI Gateway in minutes. Open source. Built with Rust. Production-ready.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button className="flex items-center gap-2 px-8 py-3.5 rounded-lg bg-gradient-to-r from-[#070F54] to-[#E31836] text-white font-semibold font-[Sora] hover:shadow-[0_0_32px_rgba(109,73,255,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98]">
+            <a
+              href="https://github.com/api7/aisix"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-8 py-3.5 rounded-lg bg-gradient-to-r from-[#070F54] to-[#E31836] text-white font-semibold font-[Sora] hover:shadow-[0_0_32px_rgba(109,73,255,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
               Get Started Now
               <ArrowRight className="w-4 h-4" />
-            </button>
-            <button className="flex items-center gap-2 px-8 py-3.5 rounded-lg border border-white/10 bg-white/3 text-white font-medium font-[Outfit] hover:bg-white/6 hover:border-white/15 transition-all">
-              <BookOpen className="w-4 h-4" />
-              Read Documentation
-            </button>
+            </a>
+            <a
+              href="https://calendly.com/api7/meeting"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-8 py-3.5 rounded-lg border border-white/10 bg-white/3 text-white font-medium font-[Outfit] hover:bg-white/6 hover:border-white/15 transition-all"
+            >
+              Contact Us
+              <ArrowRight className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </div>

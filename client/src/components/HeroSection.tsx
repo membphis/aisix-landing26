@@ -258,13 +258,18 @@ export default function HeroSection() {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center gap-4 mb-12">
-              <button className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#070F54] to-[#E31836] text-white font-semibold font-[Sora] text-sm hover:shadow-[0_0_32px_rgba(109,73,255,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98]">
+              <a
+                href="https://github.com/api7/aisix"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#070F54] to-[#E31836] text-white font-semibold font-[Sora] text-sm hover:shadow-[0_0_32px_rgba(109,73,255,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
                 <BookOpen className="w-4 h-4" />
                 Read the Docs
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </a>
               <a
-                href="https://github.com"
+                href="https://github.com/api7/aisix"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 rounded-lg border border-white/10 bg-white/3 text-white font-medium font-[Outfit] text-sm hover:bg-white/6 hover:border-white/15 transition-all backdrop-blur-sm"
