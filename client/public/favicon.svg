@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A1A3A"/>
+      <stop offset="100%" stop-color="#061230"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="16" y1="10" x2="48" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0D2E6B"/>
+      <stop offset="60%" stop-color="#1A4B8C"/>
+      <stop offset="100%" stop-color="#0A3366"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="12" y1="50" x2="40" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4CF7FF"/>
+      <stop offset="100%" stop-color="#2090D0" stop-opacity="0.5"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer hexagon -->
+  <polygon points="16,3.7 48,3.7 62,32 48,60.3 16,60.3 2,32" fill="url(#g1)"/>
+  <!-- Inner hexagon -->
+  <polygon points="21,10.5 43,10.5 54,32 43,53.5 21,53.5 10,32" fill="url(#g2)"/>
+  <!-- Simplified circuit lines -->
+  <path d="M24 24L38 18M17 34L47 26M26 46L40 38" stroke="#2870B8" stroke-width="1" stroke-opacity="0.5" stroke-linecap="round"/>
+  <!-- Node dots -->
+  <circle cx="30" cy="21" r="1.8" fill="#3898D8" opacity="0.7"/>
+  <circle cx="36" cy="30" r="1.8" fill="#3898D8" opacity="0.6"/>
+  <circle cx="32" cy="42" r="1.8" fill="#3898D8" opacity="0.7"/>
+  <!-- Cyan accent on bottom-left edge -->
+  <line x1="10" y1="32" x2="21" y2="53.5" stroke="url(#g3)" stroke-width="2" stroke-linecap="round"/>
+  <!-- Thin cyan hex outline glow -->
+  <polygon points="21,10.5 43,10.5 54,32 43,53.5 21,53.5 10,32" fill="none" stroke="#4CF7FF" stroke-width="0.6" opacity="0.25"/>
+</svg>
