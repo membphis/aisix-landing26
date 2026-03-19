@@ -195,7 +195,7 @@ export default function CodeSection() {
             {isModelMgmtTab ? (
               <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
                 <img
-                  src="./images/aisix_ui_models.png"
+                  src="/images/aisix_ui_models.png"
                   alt="AISIX Model Management UI"
                   className="w-full h-auto object-cover"
                   loading="lazy"
@@ -204,7 +204,7 @@ export default function CodeSection() {
             ) : isApiKeyMgmtTab ? (
               <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
                 <img
-                  src="./images/aisix_ui_apikeys.png"
+                  src="/images/aisix_ui_apikeys.png"
                   alt="AISIX API Key Management UI"
                   className="w-full h-auto object-cover"
                   loading="lazy"
