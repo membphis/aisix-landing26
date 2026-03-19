@@ -2,7 +2,7 @@
  * Design: Cybernetic Brutalism
  * Features Deep Dive — DEVELOPER EXPERIENCE
  * Left: Tab-switchable descriptions, Right: Code block
- * Tab 1: Quick Start (Docker), Tab 2: Model Configuration, Tab 3: APIKey Management
+ * Tab 1: Quick Start (Local Run), Tab 2: Model Configuration, Tab 3: APIKey Management
  */
 import { useState } from "react";
 import { useReveal } from "@/hooks/useReveal";
@@ -13,36 +13,30 @@ const tabs = [
     label: "Quick Start",
     icon: Rocket,
     lang: "bash",
-    description: "Get AISIX running in under 5 minutes with Docker. A single command sets up the gateway with sensible defaults, ready for production traffic.",
+    description: "Launch AISIX instantly with one command",
     bullets: [
-      "One-command Docker deployment",
-      "Sensible production defaults",
-      "Health check endpoint included",
-      "Hot-reload configuration",
     ],
   },
   {
-    label: "Model Config",
+    label: "Model Mgmt",
     icon: Settings,
-    lang: "yaml",
-    description: "Define your LLM models with a simple YAML configuration. Specify providers, models, weights, and fallback strategies in a declarative format.",
+    lang: "json",
+    description: "Manage provider-backed models through the Admin API or built-in UI",
     bullets: [
-      "Declarative YAML configuration",
-      "Multi-provider support",
-      "Weighted load balancing",
-      "Automatic fallback chains",
+      "LLMs: OpenAI, Anthropic, Gemini, DeepSeek, and more",
+      "Per-model timeout and rate limits",
+      "Hot-reload without restarts",
     ],
   },
   {
     label: "APIKey Mgmt",
     icon: Key,
-    lang: "yaml",
-    description: "Issue Virtual Keys to your developers and teams. Set per-key rate limits, model access controls, and usage budgets with fine-grained policies.",
+    lang: "json",
+    description: "Manage API keys through the Admin API or built-in UI",
     bullets: [
-      "Virtual API key issuance",
-      "Per-key rate limiting",
-      "Model access control",
-      "Usage budget enforcement",
+      "Per-key model allowlists",
+      "Per-key RPM, TPM, and concurrency limits",
+      "Bearer auth on proxy requests",
     ],
   },
 ];
@@ -50,49 +44,32 @@ const tabs = [
 const codeBlocks = [
   // Quick Start
   [
-    { ln: 1, type: "comment", text: "# Pull and run AISIX with Docker" },
-    { ln: 2, type: "default", text: "docker run -d --name aisix \\" },
-    { ln: 3, type: "default", text: "  -p 9080:9080 -p 9443:9443 \\" },
-    { ln: 4, type: "default", text: "  -v $(pwd)/config:/usr/local/aisix/conf \\" },
-    { ln: 5, type: "default", text: "  aisix/aisix-gateway:latest" },
-    { ln: 6, type: "empty", text: "" },
-    { ln: 7, type: "comment", text: "# Verify the gateway is running" },
-    { ln: 8, type: "default", text: "curl http://localhost:9080/healthcheck" },
-    { ln: 9, type: "comment", text: '# {"status":"ok","version":"2.0.0"}' },
+    { ln: 1, type: "default", text: 'curl -sL "https://run.api7.ai/aisix/quickstart" | sh' },
   ],
   // Model Configuration
   [
-    { ln: 1, type: "comment", text: "# models.yaml - LLM Provider Configuration" },
-    { ln: 2, type: "key", text: "models:" },
-    { ln: 3, type: "bullet", text: "  - name: gpt-4o" },
-    { ln: 4, type: "kv", key: "    provider:", val: " openai" },
-    { ln: 5, type: "kv", key: "    weight:", val: " 40" },
-    { ln: 6, type: "kv", key: "    max_tokens:", val: " 128000" },
-    { ln: 7, type: "bullet", text: "  - name: deepseek-chat" },
-    { ln: 8, type: "kv", key: "    provider:", val: " deepseek" },
-    { ln: 9, type: "kv", key: "    weight:", val: " 35" },
-    { ln: 10, type: "kv", key: "    priority:", val: " 1" },
-    { ln: 11, type: "bullet", text: "  - name: claude-3-sonnet" },
-    { ln: 12, type: "kv", key: "    provider:", val: " anthropic" },
-    { ln: 13, type: "kv", key: "    weight:", val: " 25" },
-    { ln: 14, type: "mixed", key: "    priority:", val: " 2  ", comment: "# fallback" },
+    { ln: 1, type: "comment", text: "# POST /models" },
+    { ln: 2, type: "default", text: "{" },
+    { ln: 3, type: "default", text: '  "name": "gpt-5-chat",' },
+    { ln: 4, type: "default", text: '  "model": "openai/gpt-5",' },
+    { ln: 5, type: "default", text: '  "provider_config": { "api_key": "sk-openai-xxxx" },' },
+    { ln: 6, type: "default", text: '  "timeout": 30000,' },
+    { ln: 7, type: "default", text: '  "rate_limit": { "rpm": 120, "concurrency": 16 }' },
+    { ln: 8, type: "default", text: "}" },
+    { ln: 9, type: "empty", text: "" },
+    { ln: 10, type: "comment", text: "# Also manageable from http://127.0.0.1:3001/ui/" },
   ],
   // APIKey Management
   [
-    { ln: 1, type: "comment", text: "# consumers.yaml - API Key Management" },
-    { ln: 2, type: "key", text: "consumers:" },
-    { ln: 3, type: "bullet", text: "  - name: team-frontend" },
-    { ln: 4, type: "key", text: "    credentials:" },
-    { ln: 5, type: "kv", key: "      api_key:", val: " vk-frontend-xxxx" },
-    { ln: 6, type: "key", text: "    rate_limit:" },
-    { ln: 7, type: "kv", key: "      tokens_per_minute:", val: " 50000" },
-    { ln: 8, type: "kv", key: "      requests_per_minute:", val: " 100" },
-    { ln: 9, type: "key", text: "    allowed_models:" },
-    { ln: 10, type: "bullet", text: "      - gpt-4o" },
-    { ln: 11, type: "bullet", text: "      - deepseek-chat" },
-    { ln: 12, type: "key", text: "    budget:" },
-    { ln: 13, type: "kv", key: "      monthly_limit_usd:", val: " 500" },
-    { ln: 14, type: "kv", key: "      alert_threshold:", val: " 0.8" },
+    { ln: 1, type: "comment", text: "# POST /apikeys" },
+    { ln: 2, type: "default", text: "{" },
+    { ln: 3, type: "default", text: '  "key": "sk-team-frontend",' },
+    { ln: 4, type: "default", text: '  "allowed_models": ["openai/gpt-5", "deepseek/deepseek-chat"],' },
+    { ln: 5, type: "default", text: '  "rate_limit": { "rpm": 300, "tpm": 120000, "concurrency": 20 }' },
+    { ln: 6, type: "default", text: "}" },
+    { ln: 7, type: "empty", text: "" },
+    { ln: 8, type: "comment", text: "# Use as: Authorization: Bearer sk-team-frontend" },
+    { ln: 9, type: "comment", text: "# Against: /v1/chat/completions" },
   ],
 ];
 
@@ -127,6 +104,8 @@ export default function CodeSection() {
   const [copied, setCopied] = useState(false);
   const { ref: leftRef, visible: leftVisible } = useReveal();
   const { ref: rightRef, visible: rightVisible } = useReveal();
+  const isModelMgmtTab = activeTab === 1;
+  const isApiKeyMgmtTab = activeTab === 2;
 
   const handleCopy = () => {
     const lines = codeBlocks[activeTab].map((l: any) => {
@@ -157,7 +136,7 @@ export default function CodeSection() {
             </span>
           </h2>
           <p className="text-slate-400 font-[Outfit] leading-relaxed text-lg">
-            Simple YAML configuration. OpenAI-compatible API. Production-ready from day one.
+            OpenAI-compatible API. Production-ready from day one.
           </p>
         </div>
 
@@ -206,42 +185,62 @@ export default function CodeSection() {
             </ul>
           </div>
 
-          {/* Right: Code Block */}
+          {/* Right: Code Block / Image */}
           <div
             ref={rightRef}
             className={`transition-all duration-700 ${
               rightVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
             }`}
           >
-            <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
-              {/* Code header */}
-              <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
-                <div className="flex items-center gap-2 text-[11px] text-slate-500 font-mono">
-                  <Terminal className="w-3.5 h-3.5" />
-                  <span>{currentTab.lang}</span>
+            {isModelMgmtTab ? (
+              <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
+                <img
+                  src="./images/aisix_ui_models.png"
+                  alt="AISIX Model Management UI"
+                  className="w-full h-auto object-cover"
+                  loading="lazy"
+                />
+              </div>
+            ) : isApiKeyMgmtTab ? (
+              <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
+                <img
+                  src="./images/aisix_ui_apikeys.png"
+                  alt="AISIX API Key Management UI"
+                  className="w-full h-auto object-cover"
+                  loading="lazy"
+                />
+              </div>
+            ) : (
+              <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
+                {/* Code header */}
+                <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+                  <div className="flex items-center gap-2 text-[11px] text-slate-500 font-mono">
+                    <Terminal className="w-3.5 h-3.5" />
+                    <span>{currentTab.lang}</span>
+                  </div>
+                  <button
+                    onClick={handleCopy}
+                    className="p-2 text-slate-600 hover:text-slate-300 transition-colors"
+                    title="Copy code"
+                  >
+                    {copied ? (
+                      <Check className="w-4 h-4 text-violet-400" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
-                <button
-                  onClick={handleCopy}
-                  className="p-2 text-slate-600 hover:text-slate-300 transition-colors"
-                  title="Copy code"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4 text-violet-400" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </button>
-              </div>
 
-              {/* Code Body */}
-              <div className="p-5 overflow-x-auto">
-                <pre className="text-[13px] font-mono">
-                  {codeBlocks[activeTab].map((line) => (
-                    <CodeLine key={`${activeTab}-${line.ln}`} line={line} />
-                  ))}
-                </pre>
+                {/* Code Body */}
+                <div className="p-5 overflow-x-auto">
+                  <pre className="text-[13px] font-mono">
+                    {codeBlocks[activeTab].map((line) => (
+                      <CodeLine key={`${activeTab}-${line.ln}`} line={line} />
+                    ))}
+                  </pre>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
