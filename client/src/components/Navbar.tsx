@@ -21,6 +21,7 @@ export default function Navbar() {
     { label: "Architecture", href: "#architecture" },
     { label: "Docs", href: "#docs" },
     { label: "Ecosystem", href: "#ecosystem" },
+    { label: "Pricing", href: "#pricing" },
   ];
 
   return (

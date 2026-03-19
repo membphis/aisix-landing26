@@ -1,75 +1,98 @@
 /*
  * Design: Cybernetic Brutalism
  * Features Deep Dive — DEVELOPER EXPERIENCE
- * Left: Tab-switchable descriptions, Right: Code block
- * Tab 1: Quick Start (Local Run), Tab 2: Model Configuration, Tab 3: APIKey Management
+ * Left: Tab-switchable descriptions, Right: Diagram / Code block
+ * Tab 1: Security, Tab 2: Observability, Tab 3: UI
  */
 import { useState } from "react";
 import { useReveal } from "@/hooks/useReveal";
-import { Terminal, Copy, Check, Rocket, Settings, Key } from "lucide-react";
+import { Terminal, Copy, Check, Shield, Activity, Layout } from "lucide-react";
 
 const tabs = [
   {
-    label: "Quick Start",
-    icon: Rocket,
+    label: "Security",
+    icon: Shield,
+    lang: "yaml",
+    description: "Enterprise-grade security built into every request. AISIX enforces rate limits, content guardrails, and access controls so your AI services stay safe at scale.",
+    bullets: [
+      "TPM / RPM rate limiting — cap tokens-per-minute and requests-per-minute per key, per model, or globally",
+      "Guardrails — block prompt injection, PII leakage, and toxic content before it reaches the model",
+      "Per-key access control — restrict which models each API key can call",
+      "Concurrency limits — prevent single consumers from monopolising capacity",
+    ],
+  },
+  {
+    label: "Observability",
+    icon: Activity,
+    lang: "yaml",
+    description: "Full visibility into every LLM call. AISIX ships built-in metrics and distributed tracing so you can monitor cost, latency, and quality in real time.",
+    bullets: [
+      "Metrics — request count, token usage, latency histograms, and error rates exported to Prometheus",
+      "Tracing — OpenTelemetry-compatible spans for every request, from gateway to provider and back",
+      "Cost tracking — per-model and per-key spend dashboards out of the box",
+      "Alerting-ready — integrate with Grafana, Datadog, or any OTLP-compatible backend",
+    ],
+  },
+  {
+    label: "UI",
+    icon: Layout,
     lang: "bash",
-    description: "Launch AISIX instantly with one command",
+    description: "A built-in management console for day-to-day operations. No CLI required — configure models, rotate keys, and test prompts from your browser.",
     bullets: [
-    ],
-  },
-  {
-    label: "Model Mgmt",
-    icon: Settings,
-    lang: "json",
-    description: "Manage provider-backed models through the Admin API or built-in UI",
-    bullets: [
-      "LLMs: OpenAI, Anthropic, Gemini, DeepSeek, and more",
-      "Per-model timeout and rate limits",
-      "Hot-reload without restarts",
-    ],
-  },
-  {
-    label: "APIKey Mgmt",
-    icon: Key,
-    lang: "json",
-    description: "Manage API keys through the Admin API or built-in UI",
-    bullets: [
-      "Per-key model allowlists",
-      "Per-key RPM, TPM, and concurrency limits",
-      "Bearer auth on proxy requests",
+      "Model Management — add, edit, and remove provider-backed models with live validation",
+      "Key Management — create and rotate API keys, set quotas, and assign model allowlists",
+      "Playground — send test prompts, compare models side-by-side, and inspect full request / response payloads",
     ],
   },
 ];
 
 const codeBlocks = [
-  // Quick Start
+  // Security — rate-limit + guardrail config
   [
-    { ln: 1, type: "default", text: 'curl -sL "https://run.api7.ai/aisix/quickstart" | sh' },
-  ],
-  // Model Configuration
-  [
-    { ln: 1, type: "comment", text: "# POST /models" },
-    { ln: 2, type: "default", text: "{" },
-    { ln: 3, type: "default", text: '  "name": "gpt-5-chat",' },
-    { ln: 4, type: "default", text: '  "model": "openai/gpt-5",' },
-    { ln: 5, type: "default", text: '  "provider_config": { "api_key": "sk-openai-xxxx" },' },
-    { ln: 6, type: "default", text: '  "timeout": 30000,' },
-    { ln: 7, type: "default", text: '  "rate_limit": { "rpm": 120, "concurrency": 16 }' },
-    { ln: 8, type: "default", text: "}" },
-    { ln: 9, type: "empty", text: "" },
-    { ln: 10, type: "comment", text: "# Also manageable from http://127.0.0.1:3001/ui/" },
-  ],
-  // APIKey Management
-  [
-    { ln: 1, type: "comment", text: "# POST /apikeys" },
+    { ln: 1, type: "comment", text: "# Rate limiting per API key" },
     { ln: 2, type: "default", text: "{" },
     { ln: 3, type: "default", text: '  "key": "sk-team-frontend",' },
-    { ln: 4, type: "default", text: '  "allowed_models": ["openai/gpt-5", "deepseek/deepseek-chat"],' },
-    { ln: 5, type: "default", text: '  "rate_limit": { "rpm": 300, "tpm": 120000, "concurrency": 20 }' },
-    { ln: 6, type: "default", text: "}" },
-    { ln: 7, type: "empty", text: "" },
-    { ln: 8, type: "comment", text: "# Use as: Authorization: Bearer sk-team-frontend" },
-    { ln: 9, type: "comment", text: "# Against: /v1/chat/completions" },
+    { ln: 4, type: "default", text: '  "rate_limit": {' },
+    { ln: 5, type: "default", text: '    "rpm": 300,' },
+    { ln: 6, type: "default", text: '    "tpm": 120000,' },
+    { ln: 7, type: "default", text: '    "concurrency": 20' },
+    { ln: 8, type: "default", text: '  },' },
+    { ln: 9, type: "default", text: '  "guardrails": {' },
+    { ln: 10, type: "default", text: '    "block_prompt_injection": true,' },
+    { ln: 11, type: "default", text: '    "mask_pii": true,' },
+    { ln: 12, type: "default", text: '    "content_policy": "strict"' },
+    { ln: 13, type: "default", text: '  }' },
+    { ln: 14, type: "default", text: "}" },
+  ],
+  // Observability — metrics + tracing config
+  [
+    { ln: 1, type: "comment", text: "# Observability configuration" },
+    { ln: 2, type: "default", text: "{" },
+    { ln: 3, type: "default", text: '  "metrics": {' },
+    { ln: 4, type: "default", text: '    "enabled": true,' },
+    { ln: 5, type: "default", text: '    "export": "prometheus",' },
+    { ln: 6, type: "default", text: '    "include": ["request_count", "token_usage", "latency", "error_rate"]' },
+    { ln: 7, type: "default", text: '  },' },
+    { ln: 8, type: "default", text: '  "tracing": {' },
+    { ln: 9, type: "default", text: '    "enabled": true,' },
+    { ln: 10, type: "default", text: '    "protocol": "otlp",' },
+    { ln: 11, type: "default", text: '    "endpoint": "http://otel-collector:4318"' },
+    { ln: 12, type: "default", text: '  }' },
+    { ln: 13, type: "default", text: "}" },
+  ],
+  // UI — launch command
+  [
+    { ln: 1, type: "comment", text: "# Access the built-in management console" },
+    { ln: 2, type: "default", text: 'open http://127.0.0.1:3001/ui/' },
+    { ln: 3, type: "empty", text: "" },
+    { ln: 4, type: "comment", text: "# Manage models" },
+    { ln: 5, type: "default", text: 'open http://127.0.0.1:3001/ui/models' },
+    { ln: 6, type: "empty", text: "" },
+    { ln: 7, type: "comment", text: "# Manage API keys" },
+    { ln: 8, type: "default", text: 'open http://127.0.0.1:3001/ui/apikeys' },
+    { ln: 9, type: "empty", text: "" },
+    { ln: 10, type: "comment", text: "# Playground — test prompts in browser" },
+    { ln: 11, type: "default", text: 'open http://127.0.0.1:3001/ui/playground' },
   ],
 ];
 
@@ -104,8 +127,7 @@ export default function CodeSection() {
   const [copied, setCopied] = useState(false);
   const { ref: leftRef, visible: leftVisible } = useReveal();
   const { ref: rightRef, visible: rightVisible } = useReveal();
-  const isModelMgmtTab = activeTab === 1;
-  const isApiKeyMgmtTab = activeTab === 2;
+  const isUITab = activeTab === 2;
 
   const handleCopy = () => {
     const lines = codeBlocks[activeTab].map((l: any) => {
@@ -192,20 +214,11 @@ export default function CodeSection() {
               rightVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
             }`}
           >
-            {isModelMgmtTab ? (
+            {isUITab ? (
               <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
                 <img
                   src="/images/aisix_ui_models.png"
-                  alt="AISIX Model Management UI"
-                  className="w-full h-auto object-cover"
-                  loading="lazy"
-                />
-              </div>
-            ) : isApiKeyMgmtTab ? (
-              <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
-                <img
-                  src="/images/aisix_ui_apikeys.png"
-                  alt="AISIX API Key Management UI"
+                  alt="AISIX Management Console — Playground"
                   className="w-full h-auto object-cover"
                   loading="lazy"
                 />

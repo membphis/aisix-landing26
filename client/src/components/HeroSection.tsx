@@ -253,7 +253,7 @@ export default function HeroSection() {
             </h1>
 
             <p className="text-lg text-slate-400 max-w-xl mb-8 leading-relaxed font-[Outfit]">
-              Route, balance, secure, and observe all your AI traffic through a single, lightning-fast gateway. Built on Rust for unparalleled stability and sub-millisecond overhead. Unified governance, cost control, and rich observability — all in one open-source solution.
+              Built on Rust for unparalleled stability and sub-millisecond overhead. Unified governance, cost control, and rich observability — all in one open-source solution.
             </p>
 
             {/* CTA Buttons */}
