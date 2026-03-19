@@ -15,7 +15,7 @@ const tabs = [
     lang: "yaml",
     description: "Enterprise-grade security built into every request",
     bullets: [
-      "TPM / RPM rate limiting — cap tokens-per-minute and requests-per-minute per key, per model, or globally",
+      "TPM / RPM rate limiting — cap tokens-per-minute and requests-per-minute per key, per model",
       "Guardrails — block prompt injection, PII leakage, and toxic content before it reaches the model",
       "Per-key access control — restrict which models each API key can call",
       "Concurrency limits — prevent single consumers from monopolising capacity",
@@ -27,17 +27,17 @@ const tabs = [
     lang: "yaml",
     description: "Full visibility into every LLM call. AISIX ships built-in metrics and distributed tracing so you can monitor cost, latency, and quality in real time.",
     bullets: [
-      "Metrics — request count, token usage, latency histograms, and error rates exported to Prometheus",
-      "Tracing — OpenTelemetry-compatible spans for every request, from gateway to provider and back",
-      "Cost tracking — per-model and per-key spend dashboards out of the box",
-      "Alerting-ready — integrate with Grafana, Datadog, or any OTLP-compatible backend",
+      "Metrics — requests, tokens, latency, error rates",
+      "Tracing — OpenTelemetry spans end-to-end",
+      "Cost tracking — by model and API key",
+      "Alerting — works with Grafana and Datadog",
     ],
   },
   {
-    label: "UI",
+    label: "Admin UI",
     icon: Layout,
     lang: "bash",
-    description: "A built-in management console for day-to-day operations",
+    description: "A built-in management UI for day-to-day operations",
     bullets: [
       "Model Management — add, edit, and remove provider-backed models with live validation",
       "Key Management — create and rotate API keys, set quotas, and assign model allowlists",
@@ -128,6 +128,7 @@ export default function CodeSection() {
   const { ref: leftRef, visible: leftVisible } = useReveal();
   const { ref: rightRef, visible: rightVisible } = useReveal();
   const isSecurityTab = activeTab === 0;
+  const isObservabilityTab = activeTab === 1;
   const isUITab = activeTab === 2;
 
   const handleCopy = () => {
@@ -220,6 +221,15 @@ export default function CodeSection() {
                 <img
                   src="/images/aisix_security.png"
                   alt="AISIX Security Flow"
+                  className="w-full h-auto object-cover"
+                  loading="lazy"
+                />
+              </div>
+            ) : isObservabilityTab ? (
+              <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
+                <img
+                  src="/images/apisix_ui_metrics.png"
+                  alt="AISIX Management Console - Metrics"
                   className="w-full h-auto object-cover"
                   loading="lazy"
                 />
