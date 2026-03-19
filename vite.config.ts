@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
+import { viteSingleFile } from "vite-plugin-singlefile";
 
 // =============================================================================
 // Manus Debug Collector - Vite Plugin
@@ -150,7 +151,8 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+const isSingleFile = process.env.BUILD_SINGLEFILE === "1";
+const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), ...(isSingleFile ? [viteSingleFile()] : [])];
 
 export default defineConfig({
   plugins,
@@ -166,6 +168,10 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    ...(isSingleFile && {
+      assetsInlineLimit: Infinity,
+      cssCodeSplit: false,
+    }),
   },
   server: {
     port: 3000,
