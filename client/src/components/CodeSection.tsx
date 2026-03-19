@@ -13,7 +13,7 @@ const tabs = [
     label: "Security",
     icon: Shield,
     lang: "yaml",
-    description: "Enterprise-grade security built into every request. AISIX enforces rate limits, content guardrails, and access controls so your AI services stay safe at scale.",
+    description: "Enterprise-grade security built into every request",
     bullets: [
       "TPM / RPM rate limiting — cap tokens-per-minute and requests-per-minute per key, per model, or globally",
       "Guardrails — block prompt injection, PII leakage, and toxic content before it reaches the model",
@@ -37,7 +37,7 @@ const tabs = [
     label: "UI",
     icon: Layout,
     lang: "bash",
-    description: "A built-in management console for day-to-day operations. No CLI required — configure models, rotate keys, and test prompts from your browser.",
+    description: "A built-in management console for day-to-day operations",
     bullets: [
       "Model Management — add, edit, and remove provider-backed models with live validation",
       "Key Management — create and rotate API keys, set quotas, and assign model allowlists",
@@ -127,6 +127,7 @@ export default function CodeSection() {
   const [copied, setCopied] = useState(false);
   const { ref: leftRef, visible: leftVisible } = useReveal();
   const { ref: rightRef, visible: rightVisible } = useReveal();
+  const isSecurityTab = activeTab === 0;
   const isUITab = activeTab === 2;
 
   const handleCopy = () => {
@@ -214,10 +215,19 @@ export default function CodeSection() {
               rightVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
             }`}
           >
-            {isUITab ? (
+            {isSecurityTab ? (
               <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
                 <img
-                  src="/images/aisix_ui_models.png"
+                  src="/images/aisix_security.png"
+                  alt="AISIX Security Flow"
+                  className="w-full h-auto object-cover"
+                  loading="lazy"
+                />
+              </div>
+            ) : isUITab ? (
+              <div className="rounded-xl border border-white/8 bg-[#0a0f1e] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
+                <img
+                  src="/images/aisix_ui_playground.png"
                   alt="AISIX Management Console — Playground"
                   className="w-full h-auto object-cover"
                   loading="lazy"

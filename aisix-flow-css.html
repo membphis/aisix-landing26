@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AISIX Gateway Flow</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; min-height: 100vh;
+      background: #07101c;
+      font-family: 'Inter', sans-serif;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    /* ═══════════════════════════════════════
+       CANVAS  — fixed 1160px wide
+    ═══════════════════════════════════════ */
+    .canvas {
+      position: relative;
+      width: 1160px;
+      flex-shrink: 0;
+      background: linear-gradient(150deg, #0d1a30 0%, #111f3a 55%, #0d1a30 100%);
+      border-radius: 24px;
+      padding: 44px 48px 40px;
+      border: 1px solid rgba(99,102,241,0.2);
+      box-shadow:
+        0 0 0 1px rgba(99,102,241,0.08),
+        0 0 80px rgba(99,102,241,0.1),
+        0 40px 100px rgba(0,0,0,0.6);
+      overflow: hidden;
+    }
+
+    /* dot grid */
+    .canvas::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: 24px;
+      background-image: radial-gradient(circle, rgba(99,102,241,0.07) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    /* glow orbs */
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); pointer-events: none; z-index: 0;
+    }
+    .orb-1 { width: 360px; height: 360px; background: rgba(99,102,241,0.11); top: -120px; left: 50%; transform: translateX(-50%); }
+    .orb-2 { width: 220px; height: 220px; background: rgba(34,197,94,0.08);  bottom: -80px; right: 60px; }
+    .orb-3 { width: 180px; height: 180px; background: rgba(168,85,247,0.07); top: 60px; right: 300px; }
+
+    /* ═══════════════════════════════════════
+       MAIN FLOW ROW
+    ═══════════════════════════════════════ */
+    .flow-row {
+      position: relative; z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      /* no wrapping — fixed canvas width handles it */
+    }
+
+    /* ═══════════════════════════════════════
+       ENDPOINT NODES (Client / Model)
+    ═══════════════════════════════════════ */
+    .node {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 8px; border-radius: 16px;
+      padding: 0;
+      flex-shrink: 0;
+      transition: transform 0.25s ease;
+      cursor: default;
+    }
+    .node:hover { transform: translateY(-4px); }
+    .node-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .node-label { font-size: 13px; font-weight: 600; text-align: center; line-height: 1.35; }
+    .node-sub   { font-size: 10px; color: #475569; font-family: 'JetBrains Mono', monospace; text-align: center; }
+
+    .node-client {
+      width: auto;
+      background: none;
+      border: none;
+    }
+    .node-client .node-icon { background: rgba(148,163,184,0.1); }
+    .node-client .node-label { color: #94a3b8; }
+
+    .node-model {
+      width: auto;
+      background: none;
+      border: none;
+      box-shadow: none;
+    }
+    .node-model .node-icon {
+      background: linear-gradient(135deg, #15803d, #22c55e);
+      box-shadow: 0 4px 16px rgba(34,197,94,0.4);
+    }
+    .node-model .node-label { color: #86efac; }
+
+    /* ═══════════════════════════════════════
+       ARROW CONNECTORS
+    ═══════════════════════════════════════ */
+    .arrow {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px; flex-shrink: 0; width: 52px;
+    }
+    .arrow-label {
+      font-size: 9.5px; color: #6366f1;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(8,16,28,0.9);
+      padding: 2px 7px; border-radius: 8px;
+      white-space: nowrap;
+    }
+    .arrow-track {
+      position: relative;
+      display: flex; align-items: center;
+      width: 100%;
+    }
+    .arrow-shaft {
+      flex: 1; height: 2px;
+      background: linear-gradient(90deg, rgba(99,102,241,0.7), rgba(99,102,241,0.35));
+    }
+    .arrow-head {
+      width: 0; height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 8px solid rgba(99,102,241,0.8);
+      flex-shrink: 0;
+    }
+    /* green variant */
+    .arrow-green .arrow-label { color: #22c55e; }
+    .arrow-green .arrow-shaft { background: linear-gradient(90deg, rgba(34,197,94,0.7), rgba(34,197,94,0.35)); }
+    .arrow-green .arrow-head  { border-left-color: rgba(34,197,94,0.8); }
+
+    /* animated packet dot */
+    .packet {
+      position: absolute;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #818cf8; box-shadow: 0 0 8px #6366f1;
+      top: 50%; transform: translateY(-50%);
+      animation: travel 3.2s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .packet-green {
+      background: #22c55e; box-shadow: 0 0 8px #22c55e;
+      animation-delay: 1.6s;
+    }
+    @keyframes travel {
+      0%   { left: 0;    opacity: 0; }
+      8%   { opacity: 1; }
+      92%  { opacity: 1; }
+      100% { left: 100%; opacity: 0; }
+    }
+
+    /* ═══════════════════════════════════════
+       GATEWAY WRAPPER
+    ═══════════════════════════════════════ */
+    .gateway-wrap {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0;
+      flex-shrink: 0;
+    }
+    .gateway-box {
+      background: linear-gradient(145deg, #131040, #0f0d38);
+      border: 1.5px solid rgba(99,102,241,0.5);
+      border-radius: 20px;
+      padding: 18px 18px 16px;
+      box-shadow:
+        0 0 40px rgba(99,102,241,0.18),
+        inset 0 0 40px rgba(99,102,241,0.04);
+      position: relative;
+      overflow: hidden;
+    }
+    /* top glow line */
+    .gateway-box::before {
+      content: '';
+      position: absolute; top: 0; left: 20%; right: 20%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99,102,241,0.6), transparent);
+    }
+
+    /* gateway header */
+    .gw-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px; padding-bottom: 14px;
+      border-bottom: 1px solid rgba(99,102,241,0.15);
+    }
+    .gw-icon {
+      width: 42px; height: 42px; border-radius: 11px;
+      background: linear-gradient(135deg, #4338ca, #6366f1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px;
+      box-shadow: 0 4px 18px rgba(99,102,241,0.55);
+      flex-shrink: 0;
+    }
+    .gw-title    { font-size: 15px; font-weight: 700; color: #a5b4fc; }
+    .gw-subtitle { font-size: 10px; color: #6366f1; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+
+    /* ═══════════════════════════════════════
+       STEP CARDS (inside gateway)
+    ═══════════════════════════════════════ */
+    .steps-row {
+      display: flex; align-items: center; gap: 0;
+    }
+
+    .step {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 6px;
+      padding: 14px 10px 12px;
+      border-radius: 14px;
+      width: 128px;           /* fixed width */
+      flex-shrink: 0;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: default;
+    }
+    .step:hover { transform: translateY(-3px); }
+
+    .step-num {
+      position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700;
+    }
+    .step-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; margin-top: 8px;
+    }
+    .step-title { font-size: 12px; font-weight: 600; text-align: center; line-height: 1.3; }
+    .step-desc  { font-size: 9.5px; color: #475569; text-align: center; line-height: 1.4; font-family: 'JetBrains Mono', monospace; }
+
+    .step-tag {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 8.5px; font-weight: 600;
+      padding: 2px 7px; border-radius: 8px;
+      margin-top: 2px; white-space: nowrap;
+    }
+    .tag-block { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.28); }
+
+    /* colour themes */
+    .step-auth {
+      background: linear-gradient(145deg, #1a1640, #151238);
+      border: 1px solid rgba(99,102,241,0.35);
+    }
+    .step-auth .step-num  { background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.5); color: #818cf8; }
+    .step-auth .step-icon { background: rgba(99,102,241,0.15); }
+    .step-auth .step-title { color: #a5b4fc; }
+
+    .step-rate {
+      background: linear-gradient(145deg, #122030, #0e1c28);
+      border: 1px solid rgba(34,197,94,0.3);
+    }
+    .step-rate .step-num  { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.45); color: #4ade80; }
+    .step-rate .step-icon { background: rgba(34,197,94,0.13); }
+    .step-rate .step-title { color: #86efac; }
+
+    .step-guard {
+      background: linear-gradient(145deg, #1e1030, #1a0c28);
+      border: 1px solid rgba(168,85,247,0.35);
+    }
+    .step-guard .step-num  { background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.5); color: #c084fc; }
+    .step-guard .step-icon { background: rgba(168,85,247,0.13); }
+    .step-guard .step-title { color: #d8b4fe; }
+
+    /* mini arrow between steps */
+    .step-connector {
+      display: flex; align-items: center;
+      flex-shrink: 0; padding: 0 3px;
+    }
+    .sc-shaft {
+      width: 16px; height: 2px;
+      background: linear-gradient(90deg, rgba(99,102,241,0.45), rgba(99,102,241,0.2));
+    }
+    .sc-head {
+      width: 0; height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid rgba(99,102,241,0.5);
+    }
+
+    /* status chips */
+    .chip-row {
+      display: flex; gap: 6px; justify-content: center;
+      margin-top: 14px; padding-top: 13px;
+      border-top: 1px solid rgba(99,102,241,0.12);
+    }
+    .chip {
+      font-size: 9px; font-weight: 600;
+      padding: 3px 9px; border-radius: 10px;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .chip-ok     { background: rgba(34,197,94,0.12);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .chip-on     { background: rgba(99,102,241,0.12); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+    .chip-shield { background: rgba(168,85,247,0.12); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+
+  </style>
+</head>
+<body>
+
+<div class="canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- ── Main flow ── -->
+  <div class="flow-row">
+
+    <!-- ① API Client -->
+    <div class="node node-client">
+      <div class="node-icon">🖥️</div>
+      <div class="node-label">API Client</div>
+      <div class="node-sub">HTTP / SDK</div>
+    </div>
+
+    <!-- → request -->
+    <div class="arrow">
+      <div class="arrow-track">
+        <div class="arrow-shaft"></div>
+        <div class="arrow-head"></div>
+        <div class="packet"></div>
+      </div>
+    </div>
+
+    <!-- ② AISIX Gateway -->
+    <div class="gateway-wrap">
+      <div class="gateway-box">
+
+        <!-- Header -->
+        <div class="gw-header">
+          <div class="gw-icon">🛡️</div>
+          <div>
+            <div class="gw-title">AISIX Gateway</div>
+            <div class="gw-subtitle">open-source · native AI</div>
+          </div>
+        </div>
+
+        <!-- 4 step cards -->
+        <div class="steps-row">
+
+          <div class="step step-auth">
+            <div class="step-num">1</div>
+            <div class="step-icon">🔑</div>
+            <div class="step-title">Auth</div>
+            <div class="step-desc">API key<br>JWT · OAuth</div>
+            <div class="step-tag tag-block">⛔ reject if invalid</div>
+          </div>
+
+          <div class="step-connector"><div class="sc-shaft"></div><div class="sc-head"></div></div>
+
+          <div class="step step-rate">
+            <div class="step-num">2</div>
+            <div class="step-icon">⏱️</div>
+            <div class="step-title">Rate Limiting</div>
+            <div class="step-desc">TPM / RPM<br>per key · model</div>
+            <div class="step-tag tag-block">⛔ 429 if exceeded</div>
+          </div>
+
+          <div class="step-connector"><div class="sc-shaft"></div><div class="sc-head"></div></div>
+
+          <div class="step step-guard">
+            <div class="step-num">3</div>
+            <div class="step-icon">🚧</div>
+            <div class="step-title">Guardrails</div>
+            <div class="step-desc">Prompt injection<br>PII · Toxic</div>
+            <div class="step-tag tag-block">⛔ block if unsafe</div>
+          </div>
+
+        </div><!-- end steps-row -->
+
+        <!-- Status chips -->
+        <div class="chip-row">
+          <span class="chip chip-ok">✓ All checks passed</span>
+          <span class="chip chip-on">Active</span>
+          <span class="chip chip-shield">Enterprise Grade</span>
+        </div>
+
+      </div><!-- end gateway-box -->
+    </div><!-- end gateway-wrap -->
+
+    <!-- → forwarded -->
+    <div class="arrow arrow-green" style="width:52px;">
+      <div class="arrow-track">
+        <div class="arrow-shaft"></div>
+        <div class="arrow-head"></div>
+        <div class="packet packet-green"></div>
+      </div>
+    </div>
+
+    <!-- ③ LLM / AI Model -->
+    <div class="node node-model">
+      <div class="node-icon">✨</div>
+      <div class="node-label">LLM / AI Model</div>
+      <div class="node-sub">GPT · Claude · etc.</div>
+    </div>
+
+  </div><!-- end flow-row -->
+
+</div>
+
+<script>
+  // Auto-scale canvas to fit viewport
+  const canvas = document.querySelector('.canvas');
+  const CANVAS_W = 1160;
+  function scaleCanvas() {
+    const vw = window.innerWidth - 32; // 16px padding each side
+    const scale = Math.min(1, vw / CANVAS_W);
+    canvas.style.transform = `scale(${scale})`;
+    canvas.style.transformOrigin = 'top center';
+    // adjust body height so scrollbar doesn't appear
+    const scaledH = canvas.offsetHeight * scale;
+    document.body.style.minHeight = (scaledH + 64) + 'px';
+  }
+  scaleCanvas();
+  window.addEventListener('resize', scaleCanvas);
+
+  // Hover glow on step cards
+  document.querySelectorAll('.step').forEach(el => {
+    const colors = {
+      'step-auth':   'rgba(99,102,241,0.25)',
+      'step-rate':   'rgba(34,197,94,0.2)',
+      'step-guard':  'rgba(168,85,247,0.22)',
+    };
+    const cls = [...el.classList].find(c => colors[c]);
+    el.addEventListener('mouseenter', () => { el.style.boxShadow = `0 8px 28px ${colors[cls]}`; });
+    el.addEventListener('mouseleave', () => { el.style.boxShadow = ''; });
+  });
+</script>
+</body>
+</html>
